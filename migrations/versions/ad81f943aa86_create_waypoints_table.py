@@ -30,4 +30,4 @@ def upgrade():
 
 
 def downgrade():
-    op.create_table("waypoints")
+    op.drop_table("waypoints")
