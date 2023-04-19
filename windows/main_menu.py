@@ -1,1 +1,2 @@
-class MainMenu():
+class MainMenu:
+    pass
