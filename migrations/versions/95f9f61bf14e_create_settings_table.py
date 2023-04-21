@@ -20,8 +20,9 @@ def upgrade():
     op.create_table(
         "parameters",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True, index=True),
-        sa.Column("name", sa.String(64), nullable=False, unique=True),
-        sa.Column("value", sa.String(64), nullable=False)
+        sa.Column("type", sa.String(20), nullable=False),
+        sa.Column("name", sa.String(20), nullable=False, unique=True),
+        sa.Column("value", sa.String(20), nullable=False)
     )
 
 

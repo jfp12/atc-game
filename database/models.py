@@ -12,7 +12,7 @@ class Airport(Base):
     code = Column(String(3), nullable=False)
 
 
-class Flights(Base):
+class Flight(Base):
     __tablename__ = 'flights'
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
@@ -23,7 +23,7 @@ class Flights(Base):
     UniqueConstraint('airport_id', 'flight_no', name='unique_flight')
 
 
-class Waypoints(Base):
+class Waypoint(Base):
     __tablename__ = 'waypoints'
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
@@ -35,15 +35,16 @@ class Waypoints(Base):
     exit_waypoint = Column(Boolean, nullable=False)
 
 
-class Parameters(Base):
+class Parameter(Base):
     __tablename__ = 'parameters'
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    type = Column(String(20), nullable=False)
     name = Column(String(20), nullable=False, unique=True)
     value = Column(String(20), nullable=False)
 
 
-class Runways(Base):
+class Runway(Base):
     __tablename__ = 'runways'
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
