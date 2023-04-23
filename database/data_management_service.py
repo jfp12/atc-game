@@ -13,11 +13,12 @@ class Parameters:
     height_screen: float
     width_main_menu: float
     height_main_menu: float
+    background_main_menu: str
 
 
 class DataManagementService:
     def __init__(self, db_url: str = None):
-
+        self.test = 1
         # Connection variables to data source
         self.db_url = None
         self.engine = None
@@ -46,8 +47,12 @@ class DataManagementService:
             "SELECT * FROM PARAMETERS WHERE PARAMETERS.TYPE = 'dimension'", self.engine, index_col=["id"]
         )
         params_df["value"] = params_df["value"].astype(float)
-
         self.set_all_parameters(params_df)
+
+        params_df = pd.read_sql(
+            "SELECT * FROM PARAMETERS WHERE PARAMETERS.TYPE != 'dimension'", self.engine, index_col=["id"]
+        )
+        self.set_parameters(params_df)
 
     def db_save_all_airports(self):
         airports_df = pd.read_sql("SELECT * FROM AIRPORTS", self.engine, index_col=["id"])
@@ -67,6 +72,7 @@ class DataManagementService:
         root = tk.Tk()
         self.parameters.width_screen = root.winfo_screenwidth()
         self.parameters.height_screen = root.winfo_screenheight()
+        root.destroy()
 
     def set_all_parameters(self, parameters: pd.DataFrame):
         self.set_parameters(parameters)
