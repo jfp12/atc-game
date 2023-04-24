@@ -1,17 +1,11 @@
-from tkinter import Button, Tk
-
-BUTTON_FONT = "Bahnschrift"
-
-class ATCButtonCreate:
-    window: Tk = None
-    text: str = None
-    command = None
+from tkmacosx import Button
 
 
-class ATCButton:
+class ButtonATC:
     def __init__(self, kwargs):
 
-        kwargs["font"] = BUTTON_FONT
+        x = kwargs.pop("x")
+        y = kwargs.pop("y")
 
         self.button = Button(**kwargs)
-        self.button.pack(side="top")
+        self.button.place(x=x, y=y)

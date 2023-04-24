@@ -1,10 +1,9 @@
-from contextlib import contextmanager
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 import tkinter as tk
 import pandas as pd
 
+from utils.window_codes import WindowCodes
 from database.models import Airport, Parameter
 
 
@@ -14,6 +13,10 @@ class Parameters:
     width_main_menu: float
     height_main_menu: float
     background_main_menu: str
+
+
+class GameData:
+    opened_window: WindowCodes = WindowCodes.MAIN_MENU
 
 
 class DataManagementService:
@@ -34,6 +37,9 @@ class DataManagementService:
         self.runways = pd.DataFrame()
         self.flights = pd.DataFrame()
         self.waypoints = pd.DataFrame()
+
+        # Game data variables
+        self.game_data = GameData()
 
     def load_base_data(self):
 
