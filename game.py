@@ -10,15 +10,18 @@ AIRPORT = "LIS"
 
 
 def game():
+
     win_parameters = WindowsParameters()
 
     data_service = DataManagementService(db_url=DB_URL)
     data_service.load_base_data()
 
-    if data_service.game_data.opened_window == WindowCodes.MAIN_MENU:
-        WindowMainMenu(data_service, win_parameters.main)
-    if data_service.game_data.opened_window == WindowCodes.GAME:
-        WindowGame(data_service, win_parameters.game)
+    while data_service.game_data.opened_window != WindowCodes.EXIT:
+
+        if data_service.game_data.opened_window == WindowCodes.MAIN_MENU:
+            WindowMainMenu(data_service, win_parameters.main)
+        if data_service.game_data.opened_window == WindowCodes.GAME:
+            WindowGame(data_service, win_parameters.game)
 
     data_service.close_db_connection()
 

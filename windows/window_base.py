@@ -1,50 +1,64 @@
 import tkinter as tk
 
 from database.data_management_service import DataManagementService
-from components.button import ButtonATC
+import components
 from utils.windows_parameters import SingleWindowParameters
+from base.base import Base
 
 
-class WindowBase:
-    def __init__(self, data_service: DataManagementService, win_parameters: SingleWindowParameters):
-
-        self.parameters = data_service.get_parameters()
-        self.params = win_parameters
+class WindowBase(Base):
+    def __init__(self, data_service: DataManagementService, params: SingleWindowParameters):
+        self.params = params
+        self.s_width = None
+        self.s_height = None
         self.w_width = None
         self.w_height = None
         self.x_pos = None
         self.y_pos = None
         self.background = None
         self.window = None
+        self.canvas = None
         self.title = None
 
-    def _setup_window(self):
-        self.w_width = int(self.parameters.width_screen * self.params.width)
-        self.w_height = int(self.parameters.height_screen * self.params.height)
-        self.x_pos = int((1 - self.params.width) / 2 * self.parameters.width_screen)
-        self.y_pos = int((1 - self.params.height) / 2 * self.parameters.height_screen)
-        self.background = self.params.background_colour
-        self.title = self.params.title
+        self.sections = {}
+
+        self._open_and_setup_window()
+        super().__init__(self.window, self.w_width, self.w_height, self.params, data_service)
+
+    def _open_and_setup_window(self):
+        self._open_window()
+        self._setup_window()
 
     def _open_window(self):
         self.window = tk.Tk()
-        self.window.geometry(f"{self.w_width}x{self.w_height}+{self.x_pos}+{self.y_pos}")
+        self._set_screen_dimensions()
+
+    def _setup_window(self):
+
+        # Choose the correct dimensions type: either full screen or defined dimensions
+        if isinstance(self.params.width, str):
+            self.window.attributes('-fullscreen', True)
+        else:
+            self.w_width = int(self.s_width * self.params.width)
+            self.w_height = int(self.s_height * self.params.height)
+            self.x_pos = int((1 - self.params.width) / 2 * self.s_width)
+            self.y_pos = int((1 - self.params.height) / 2 * self.s_height)
+            self.window.geometry(f"{self.w_width}x{self.w_height}+{self.x_pos}+{self.y_pos}")
+
+        self.background = self.params.background_colour
         self.window.configure(bg=self.background)
+        self.title = self.params.title
         self.window.title(self.title)
 
-    def _create_buttons(self, buttons: list):
+    def _open_canvas(self):
+        self.canvas = tk.Canvas(self.window, bd=0, highlightthickness=0)
+        self.canvas.pack(fill='both', expand=True)
 
-        for button in buttons:
-            button["master"] = self.window
-            button["bg"] = self.params.button_colour
-            button["fg"] = self.params.button_font_colour
-            button["borderless"] = 1
-            button["width"] = self.w_width * self.params.button_width
-            button["height"] = self.w_height * self.params.button_height
-            button["x"] = button["x"] * self.w_width
-            button["y"] = button["y"] * self.w_height
+    def _set_screen_dimensions(self):
+        self.s_width = self.window.winfo_screenwidth()
+        self.s_height = self.window.winfo_screenheight()
 
-            ButtonATC(button)
-
-    def _close_window(self):
-        self.window.destroy()
+    def _create_sections(self, sections: list):
+        for section in sections:
+            section_class = getattr(components, section["name"])
+            self.sections[section["name"]] = section_class(self.window, self.params, section, self.data_service)
