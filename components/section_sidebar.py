@@ -15,7 +15,14 @@ class SectionSidebar(SectionBase):
 
         self._create_buttons(
             [
-                {"master": self.section, "text": "Exit Game", "command": self._exit_game, "x": 0.6, "y": 0.8}
+                {"master": self.section, "text": "Pause Game", "command": self._exit_game, "x": 0, "y": 0.73,
+                 "width": self.params.sidebar_button_width, "height": self.params.sidebar_button_height},
+                {"master": self.section, "text": "Save Game", "command": self._exit_game, "x": 0, "y": 0.78,
+                 "width": self.params.sidebar_button_width, "height": self.params.sidebar_button_height},
+                {"master": self.section, "text": "Exit to Main Menu", "command": self._switch_to_main_menu_window, "x": 0, "y": 0.83,
+                 "width": self.params.sidebar_button_width, "height": self.params.sidebar_button_height},
+                {"master": self.section, "text": "Exit Game", "command": self._exit_game, "x": 0, "y": 0.88,
+                 "width": self.params.sidebar_button_width, "height": self.params.sidebar_button_height}
             ]
         )
 

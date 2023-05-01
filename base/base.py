@@ -6,10 +6,11 @@ from utils.window_codes import WindowCodes
 
 class Base:
     def __init__(
-        self, window, width: float, height: float, params: SingleWindowParameters, data_service: DataManagementService
+        self, window, width: float, height: float, params: SingleWindowParameters, data_service: DataManagementService, canvas = None
     ):
         self.data_service = data_service
         self.window = window
+        self.canvas = canvas
         self.width = width
         self.height = height
         self.params = params
@@ -22,8 +23,8 @@ class Base:
             button["bg"] = self.params.button_colour
             button["fg"] = self.params.button_font_colour
             button["borderless"] = 1
-            button["width"] = self.width * self.params.button_width
-            button["height"] = self.height * self.params.button_height
+            button["width"] = self.width * button["width"]
+            button["height"] = self.height * button["height"]
             button["x"] = button["x"] * self.width
             button["y"] = button["y"] * self.height
 
@@ -31,6 +32,10 @@ class Base:
 
     def _switch_to_game_window(self):
         self.data_service.game_data.opened_window = WindowCodes.GAME
+        self._close_window()
+
+    def _switch_to_main_menu_window(self):
+        self.data_service.game_data.opened_window = WindowCodes.MAIN_MENU
         self._close_window()
 
     def _exit_game(self):

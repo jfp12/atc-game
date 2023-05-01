@@ -1,8 +1,11 @@
+from datetime import datetime, timedelta
+
 from database.data_management_service import DataManagementService
 from windows.window_base import WindowBase
 from utils.windows_parameters import SingleWindowParameters
 from components.section_radar import SectionRadar
 from components.section_sidebar import SectionSidebar
+from utils.window_codes import WindowCodes
 
 
 class WindowGame(WindowBase):
@@ -11,12 +14,31 @@ class WindowGame(WindowBase):
 
         self.r_width = None
         self.r_height = None
+        self.step = datetime.utcnow()
+        self.aircraft_manager = None
 
         self._open_canvas()
         self._set_radar_dimensions()
         self._create_window_elements()
+        self.sections[SectionRadar.__name__].aircraft_manager.create_aircraft()
+        self._run_game()
+        self.window.mainloop()
+
+    def _run_game(self):
+        update_freq = timedelta(seconds=self.data_service.game_data.update_frequency)
+
+        while self.data_service.game_data.opened_window == WindowCodes.GAME:
+
+            if (datetime.utcnow() - self.step) > update_freq:
+                self._update()
+                self._update_game_step()
+
+            self.window.update()
 
         self.window.mainloop()
+
+    def _update(self):
+        self.sections[SectionRadar.__name__].aircraft_manager.move_aircraft()
 
     def _create_window_elements(self):
         self._create_sections(
@@ -35,3 +57,6 @@ class WindowGame(WindowBase):
     def _set_radar_dimensions(self):
         self.r_width = int(self.w_width * self.params.radar_width)
         self.r_height = int(self.w_height * self.params.radar_height)
+
+    def _update_game_step(self):
+        self.step = datetime.utcnow()

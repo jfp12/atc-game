@@ -39,6 +39,10 @@ class AircraftList:
         scrollbar.pack(side="right", fill="y")
 
     def _add_text(self):
-        pass
-        # self.canvas.create_text((0.5 + 0.5 * def_width) * self.screen_width, 0.03 * self.screen_height,
-        #                         font="Bahnschrift " + str(size), text="Active Flights List")
+        self.canvas.create_text(
+            self.params.aircraft_list_title_x0 * self.width,
+            self.params.aircraft_list_title_y0 * self.height,
+            font=("Bahnschrift", 25),
+            fill='black',
+            text=self.params.aircraft_list_title
+        )

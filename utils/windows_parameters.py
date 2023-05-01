@@ -14,12 +14,19 @@ class SingleWindowParameters:
     radar_width: str = None
     radar_height: str = None
     sidebar_colour: str = None
+    sidebar_button_width: str = None
+    sidebar_button_height: str = None
     aircraft_list_colour: str = None
     aircraft_list_width: float = None
     aircraft_list_height: float = None
     aircraft_list_x0: float = None
     aircraft_list_y0: float = None
     aircraft_list_title: float = None
+    aircraft_list_title_x0: float = None
+    aircraft_list_title_y0: float = None
+
+    aircraft_symbol_colour: str = None
+    aircraft_symbol_size: float = None
 
 
 class WindowsParameters:
@@ -56,9 +63,15 @@ class WindowsParameters:
         self.game.radar_width = 0.8
         self.game.radar_height = 1
         self.game.sidebar_colour = c.WHITE
+        self.game.sidebar_button_width = 1
+        self.game.sidebar_button_height = 0.05
         self.game.aircraft_list_colour = c.DARK_GREY
         self.game.aircraft_list_width = 0.85
         self.game.aircraft_list_height = 0.5
         self.game.aircraft_list_x0 = 0.05
         self.game.aircraft_list_y0 = 0.05
         self.game.aircraft_list_title = "Active Flights List"
+        self.game.aircraft_list_title_x0 = 0.55
+        self.game.aircraft_list_title_y0 = 0.06
+        self.game.aircraft_symbol_colour = c.BLACK
+        self.game.aircraft_symbol_size = 5

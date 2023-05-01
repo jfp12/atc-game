@@ -1,18 +1,22 @@
 from sqlalchemy import create_engine
+from typing import List
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 import pandas as pd
 
 from utils.window_codes import WindowCodes
-from database.models import Airport, Parameter
+from aircraft.aircraft import Aircraft
 
 
 class GameData:
     opened_window: WindowCodes = WindowCodes.MAIN_MENU
+    loaded_aircraft: List[Aircraft] = []
+    active_aircraft: List[Aircraft] = []
+    update_frequency: int = 1
 
 
 class DataManagementService:
     def __init__(self, db_url: str = None):
-        self.test = 1
+
         # Connection variables to data source
         self.db_url = None
         self.engine = None

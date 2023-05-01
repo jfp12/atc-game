@@ -18,8 +18,9 @@ class SectionBase(Base):
 
         self.section = None
         self.canvas = None
+
         self._create()
-        super().__init__(self.window, self.width, self.height, self.params, data_service)
+        super().__init__(self.window, self.width, self.height, self.params, data_service, self.canvas)
 
     def _create(self):
         self.section = tk.Frame(self.window, bg=self.bg, width=self.width, height=self.height)
@@ -28,3 +29,4 @@ class SectionBase(Base):
         self.canvas = tk.Canvas(
             self.section, bg=self.bg, width=self.width, height=self.height, bd=0, highlightbackground=self.bg
         )
+        self.canvas.pack()
