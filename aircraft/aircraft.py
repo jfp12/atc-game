@@ -1,9 +1,13 @@
 import math
+import random
+
+from database.data_management_service import DataManagementService
 
 
 class Aircraft:
-    def __init__(self, kwargs, canvas):
+    def __init__(self, kwargs, canvas, data_service: DataManagementService):
         self.canvas = canvas
+        self.data_service = data_service
         print(kwargs)
         # self.flight_no = kwargs["flight_no"]
         # self.alt = kwargs["initial_alt"]
@@ -49,9 +53,34 @@ class Aircraft:
         self.displacement_x = 0
         self.displacement_y = 0
 
-    # def _compute_initial_state(self):
-    #
-    # def _compute_initial_altitude
+    @classmethod
+    def create(cls, canvas, data_service: DataManagementService):
+
+        initial_state = {}
+
+        op_type = cls._compute_operation_type(data_service.game_data.percentage_outbound)
+        alt = cls._compute_initial_altitude(op_type)
+
+        initial_state = {
+            "op_type": op_type,
+            "alt": alt
+        }
+
+        return cls(initial_state, canvas, data_service)
+
+    @classmethod
+    def _compute_operation_type(cls, percentage_outbound: float) -> str:
+        operation_type = random.uniform(0.0, 1.0)
+
+        if operation_type <= percentage_outbound:
+            return "D"
+        else:
+            return "A"
+
+    @classmethod
+    def _compute_initial_altitude(cls, op_type: str) -> float:
+        return
+
 
     def _create_symbol(self):
         self.icon_id = self.canvas.create_rectangle(

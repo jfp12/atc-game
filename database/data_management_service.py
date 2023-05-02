@@ -12,6 +12,9 @@ class GameData:
     loaded_aircraft: List[Aircraft] = []
     active_aircraft: List[Aircraft] = []
     update_frequency: int = 1
+    aircraft_generation_rate: float = 0.4
+    total_active_aircraft: int = 20
+    percentage_outbound: float = 0.5
 
 
 class DataManagementService:
