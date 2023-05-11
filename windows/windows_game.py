@@ -20,7 +20,6 @@ class WindowGame(WindowBase):
         self._open_canvas()
         self._set_radar_dimensions()
         self._create_window_elements()
-        self.sections[SectionRadar.__name__].aircraft_manager.create_aircraft()
         self._run_game()
         self.window.mainloop()
 
@@ -38,6 +37,8 @@ class WindowGame(WindowBase):
         self.window.mainloop()
 
     def _update(self):
+        self.sections[SectionRadar.__name__].aircraft_manager.create_aircraft()
+
         self.sections[SectionRadar.__name__].aircraft_manager.move_aircraft()
 
     def _create_window_elements(self):
