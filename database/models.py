@@ -10,6 +10,7 @@ class Airport(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     code = Column(String(3), nullable=False)
+    altitude = Column(Float, nullable=False)
 
 
 class Flight(Base):
@@ -50,6 +51,7 @@ class Runway(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     airport = Column(Integer, ForeignKey("airports.id"), nullable=False)
     name = Column(String(3), nullable=False)
+    name_other_end = Column(String(3), nullable=False)
     length = Column(Float, nullable=False)
     heading = Column(Float, nullable=False)
     x_init = Column(Float, nullable=False)

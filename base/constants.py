@@ -1,0 +1,2 @@
+departure = "D"
+arrival = "A"

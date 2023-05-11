@@ -20,7 +20,8 @@ def upgrade() -> None:
     op.create_table(
         "airports",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True, index=True),
-        sa.Column("code", sa.String(3), nullable=False)
+        sa.Column("code", sa.String(3), nullable=False),
+        sa.Column("altitude", sa.Float, nullable=False)
     )
 
 

@@ -1,37 +1,48 @@
 import math
 import random
+from typing import Tuple
 
 from database.data_management_service import DataManagementService
+from base import constants as c
+from utils.colours import Colours as col
 
 
 class Aircraft:
+    data_service = None
+    op_type = None
+    runway = None
+
     def __init__(self, kwargs, canvas, data_service: DataManagementService):
         self.canvas = canvas
         self.data_service = data_service
-        print(kwargs)
+
         # self.flight_no = kwargs["flight_no"]
-        # self.alt = kwargs["initial_alt"]
-        # self.tgt_alt = kwargs["initial_alt"]
+        self.op_type = kwargs["op_type"]
+
+        self.alt = kwargs["alt"]
+        self.tgt_alt = kwargs["alt"]
         self.speed = kwargs["speed"]
-        # self.tgt_speed = kwargs["speed"]
+        self.tgt_speed = kwargs["speed"]
         self.heading = kwargs["heading"]
-        # self.tgt_heading = kwargs["heading"]
-        self.x = kwargs["x"]
-        self.y = kwargs["y"]
+        self.tgt_heading = kwargs["heading"]
+        self.x = kwargs["x_init"]
+        self.y = kwargs["y_init"]
+
+        self.fill = kwargs["fill"]
+        self.size = kwargs["size"]
+        self.icon_id = None
+        self.tag_id = None
+        self.displacement_x = 0
+        self.displacement_y = 0
+
+        self._create_symbol()
+        self._create_tag()
+
         # self.aircraft = kwargs["aircraft"]
         # self.airport = kwargs["airport"]
         # self.icon_id = kwargs["icon_id"]
         # self.tag_id = kwargs["tag_id"]
         # self.objective = kwargs["objective"]
-        # self.bound = kwargs["bound"]
-
-        self.fill = kwargs["fill"]
-        self.size = kwargs["size"]
-
-        self.icon_id = None
-        self.tag_id = None
-        self._create_symbol()
-        self._create_tag()
         # self.collision = "black"
         # self.new_orange = False
         # self.new_red = False
@@ -50,37 +61,77 @@ class Aircraft:
         # self.dep_wpt_x = dep_wpt_x
         # self.dep_wpt_y = dep_wpt_y
 
-        self.displacement_x = 0
-        self.displacement_y = 0
-
     @classmethod
-    def create(cls, canvas, data_service: DataManagementService):
+    def create(cls, canvas, data_service: DataManagementService, width: float, height: float):
+        cls.data_service = data_service
+        cls.op_type = cls._compute_operation_type()
+        cls.runway = cls._find_runway()
 
-        initial_state = {}
-
-        op_type = cls._compute_operation_type(data_service.game_data.percentage_outbound)
-        alt = cls._compute_initial_altitude(op_type)
+        x_init, y_init = cls._compute_initial_position()
 
         initial_state = {
-            "op_type": op_type,
-            "alt": alt
+            "op_type": cls.op_type,
+            "alt": cls._compute_initial_altitude(),
+            "speed": cls._compute_initial_speed(),
+            "x_init": x_init * width,
+            "y_init": y_init * height,
+            "heading": cls._compute_initial_heading(),
+            "fill": col.BLACK,
+            "size": 5
         }
 
         return cls(initial_state, canvas, data_service)
 
     @classmethod
-    def _compute_operation_type(cls, percentage_outbound: float) -> str:
+    def _compute_operation_type(cls) -> str:
         operation_type = random.uniform(0.0, 1.0)
-
+        percentage_outbound = cls.data_service.game_data.percentage_outbound
         if operation_type <= percentage_outbound:
-            return "D"
+            return c.departure
         else:
-            return "A"
+            return c.arrival
 
     @classmethod
-    def _compute_initial_altitude(cls, op_type: str) -> float:
-        return
+    def _compute_objective(cls, runway: str) -> str:
+        if cls.op_type == c.departure:
+            return "CHANGE"
+        else:
+            return runway
 
+    @classmethod
+    def _compute_initial_altitude(cls) -> float:
+        altitude = cls.data_service.get_game_airport_altitude()
+
+        if cls.op_type == c.departure:
+            return altitude
+        else:
+            return altitude + 1000 * random.randint(0, 2) + 6000
+
+    @classmethod
+    def _compute_initial_speed(cls) -> float:
+        if cls.op_type == c.departure:
+            return 0
+        else:
+            return 10 * random.randint(0, 2) + 240
+
+    @classmethod
+    def _compute_initial_heading(cls) -> float:
+        if cls.op_type == c.departure:
+            return cls.data_service.get_game_runway_heading(cls.runway)
+        else:
+            return 360
+
+    @classmethod
+    def _find_runway(cls) -> str:
+        return cls.data_service.get_random_game_runway_name()
+
+    @classmethod
+    def _compute_initial_position(cls) -> Tuple[float, float]:
+
+        if cls.op_type == c.departure:
+            return cls.data_service.get_game_runway_x(cls.runway), cls.data_service.get_game_runway_y(cls.runway)
+        else:
+            return 0.3, 0.3
 
     def _create_symbol(self):
         self.icon_id = self.canvas.create_rectangle(
@@ -119,8 +170,8 @@ class Aircraft:
         self.canvas.itemconfigure(self.tag_id, text=self._get_tag_text(), fill=self.fill)
 
     def _compute_displacement(self):
-        self.displacement_x = self.speed * math.sin(math.pi * self.heading / 180.0)
-        self.displacement_y = self.speed * math.cos(math.pi * self.heading / 180.0)
+        self.displacement_x = self._get_speed_on_screen() * math.sin(math.pi * self.heading / 180.0)
+        self.displacement_y = self._get_speed_on_screen() * math.cos(math.pi * self.heading / 180.0)
 
     def _compute_new_position(self):
         self.x += self.displacement_x
@@ -129,6 +180,9 @@ class Aircraft:
     def _move(self):
         self.canvas.move(self.icon_id, self.displacement_x, self.displacement_y)
         self.canvas.move(self.tag_id, self.displacement_x, self.displacement_y)
+
+    def _get_speed_on_screen(self) -> float:
+        return self.speed * self.data_service.game_data.screen_speed_conversion_factor
 
     def _get_tag_text(self) -> str:
         return f"{self.x}_{self.y}"

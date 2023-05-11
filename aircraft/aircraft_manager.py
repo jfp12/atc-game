@@ -22,33 +22,27 @@ class AircraftManager(Base):
         pass
 
     def create_aircraft(self):
-        self._is_aircraft_generated()
 
-        # kwargs = {
-        #     "x": 0.5 * self.width,
-        #     "y": 0.5 * self.height,
-        #     "fill": self.params.aircraft_symbol_colour,
-        #     "size": self.params.aircraft_symbol_size,
-        #     "speed": 10,
-        #     "heading": 1
-        # }
-        # self.data_service.game_data.active_aircraft.append(Aircraft(kwargs, self.canvas))
+        if self._is_aircraft_generated():
+            self.data_service.game_data.active_aircraft.append(
+                Aircraft.create(self.canvas, self.data_service, self.width, self.height)
+            )
 
     def move_aircraft(self):
         aircraft: Aircraft
         for aircraft in self.data_service.game_data.active_aircraft:
             aircraft.update()
 
-    def _is_aircraft_generated(self):
+    def _is_aircraft_generated(self) -> bool:
         creation = random.uniform(0.0, 1.0)
 
         if (
             self._get_creation_probability() < creation or
             self._get_active_aircraft() >= self.data_service.game_data.total_active_aircraft
         ):
-            return
-
-        self.data_service.game_data.active_aircraft.append(Aircraft.create(self.canvas, self.data_service))
+            return False
+        else:
+            return True
 
     def _get_creation_probability(self):
         constant = self.data_service.game_data.aircraft_generation_rate
