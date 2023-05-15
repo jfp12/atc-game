@@ -8,6 +8,8 @@ class SectionSidebar(SectionBase):
     def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: DataManagementService):
         super().__init__(window, params, kwargs, data_service)
 
+        self.aircraft_list = None
+
         self._create_sidebar_elements()
 
     def _create_sidebar_elements(self):
@@ -27,7 +29,8 @@ class SectionSidebar(SectionBase):
         )
 
     def _create_aircraft_list(self):
-        AircraftList(
+        self.aircraft_list = AircraftList(
+            data_service=self.data_service,
             width=self.width,
             height=self.height,
             window=self.section,

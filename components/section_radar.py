@@ -8,6 +8,8 @@ class SectionRadar(SectionBase):
     def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: DataManagementService):
         super().__init__(window, params, kwargs, data_service)
 
+        self.aircraft_manager = None
+
         self._initialize_aircraft_manager()
 
     def _initialize_aircraft_manager(self):

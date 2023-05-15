@@ -38,7 +38,7 @@ class AircraftManager(Base):
 
         if (
             self._get_creation_probability() < creation or
-            self._get_active_aircraft() >= self.data_service.game_data.total_active_aircraft
+            self._get_number_active_aircraft() >= self.data_service.game_data.total_active_aircraft
         ):
             return False
         else:
@@ -46,8 +46,8 @@ class AircraftManager(Base):
 
     def _get_creation_probability(self):
         constant = self.data_service.game_data.aircraft_generation_rate
-        number = self._get_active_aircraft()
+        number = self._get_number_active_aircraft()
         return math.exp(- constant * number)
 
-    def _get_active_aircraft(self):
+    def _get_number_active_aircraft(self):
         return len(self.data_service.game_data.active_aircraft)
