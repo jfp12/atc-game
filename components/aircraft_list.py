@@ -62,7 +62,7 @@ class AircraftList(Base):
         self.canvas.create_text(
             self.params.aircraft_list_title_x0 * self.width,
             self.params.aircraft_list_title_y0 * self.height,
-            font=("Bahnschrift", 25),
+            font=(self.params.main_font, int(self.params.aircraft_list_font_title_size * self.width)),
             fill='black',
             text=self.params.aircraft_list_title
         )
@@ -89,7 +89,7 @@ class AircraftList(Base):
                 tk.Label(
                     self.scrollable_frame,
                     justify="left",
-                    font=f"{self.params.main_font} {self._calculate_font_size()}",
+                    font=f"{self.params.main_font} {self._calculate_font_size(self.params.aircraft_list_font_text_size)}",
                     text=self._get_label_text(aircraft),
                     bg=self._get_label_colour(aircraft),
                     foreground=self.params.aircraft_list_font_colour,

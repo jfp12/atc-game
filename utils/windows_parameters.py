@@ -32,11 +32,26 @@ class SingleWindowParameters:
     aircraft_list_departure_text: str = None
     aircraft_list_arrival_colour: str = None
     aircraft_list_arrival_text: str = None
-    aircraft_list_font_size: int = None
+    aircraft_list_font_title_size: float = None
+    aircraft_list_font_text_size: float = None
     aircraft_list_font_colour: str = None
 
     aircraft_symbol_colour: str = None
     aircraft_symbol_size: float = None
+
+    cmd_prompt_title: str = None
+    cmd_prompt_title_font_size: float = None
+    cmd_prompt_title_font_colour: str = None
+    cmd_prompt_title_x0: float = None
+    cmd_prompt_title_y0: float = None
+    cmd_prompt_input_font_size: float = None
+    cmd_prompt_input_x0: float = None
+    cmd_prompt_input_y0: float = None
+    cmd_prompt_input_width: int = None
+    cmd_prompt_x0: float = None
+    cmd_prompt_y0: float = None
+    cmd_prompt_x1: float = None
+    cmd_prompt_y1: float = None
 
 
 class WindowsParameters:
@@ -88,6 +103,20 @@ class WindowsParameters:
         self.game.aircraft_list_arrival_colour = Colours.LIGHT_YELLOW
         self.game.aircraft_list_departure_text = "Arr.:"
         self.game.aircraft_symbol_colour = Colours.BLACK
-        self.game.aircraft_list_font_size = 0.05
+        self.game.aircraft_list_font_title_size = 0.1
+        self.game.aircraft_list_font_text_size = 0.05
         self.game.aircraft_list_font_colour = Colours.BLACK
         self.game.aircraft_symbol_size = 5
+        self.game.cmd_prompt_title = "ATC Commands"
+        self.game.cmd_prompt_title_font_size = 0.05
+        self.game.cmd_prompt_title_font_colour = Colours.WHITE
+        self.game.cmd_prompt_title_x0 = 0.5
+        self.game.cmd_prompt_title_y0 = 0.585
+        self.game.cmd_prompt_input_font_size = 0.05
+        self.game.cmd_prompt_input_x0 = 0.1
+        self.game.cmd_prompt_input_y0 = 0.595
+        self.game.cmd_prompt_input_width = 22
+        self.game.cmd_prompt_x0 = 0.05
+        self.game.cmd_prompt_y0 = 0.57
+        self.game.cmd_prompt_x1 = 0.92
+        self.game.cmd_prompt_y1 = 0.64
