@@ -30,6 +30,9 @@ class Base:
 
             self.buttons[button["text"]] = ButtonATC(button)
 
+    def _calculate_font_size(self, font_size: float) -> str:
+        return str(int(font_size * self.width))
+
     def _switch_to_game_window(self):
         self.data_service.game_data.opened_window = WindowCodes.GAME
         self._close_window()

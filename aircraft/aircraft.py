@@ -38,8 +38,10 @@ class Aircraft:
         self._create_symbol()
         self._create_tag()
 
+        # todo: import the variables below from somewhere else
+        self.airport = "LIS"
+
         # self.aircraft = kwargs["aircraft"]
-        # self.airport = kwargs["airport"]
         # self.icon_id = kwargs["icon_id"]
         # self.tag_id = kwargs["tag_id"]
         # self.objective = kwargs["objective"]
@@ -61,6 +63,7 @@ class Aircraft:
         # self.dep_wpt_x = dep_wpt_x
         # self.dep_wpt_y = dep_wpt_y
 
+    # todo: create AircraftGenerator class and put there all generation things and call it from create class method
     @classmethod
     def create(cls, canvas, data_service: DataManagementService, width: float, height: float):
         cls.data_service = data_service
@@ -76,6 +79,7 @@ class Aircraft:
             "x_init": x_init * width,
             "y_init": y_init * height,
             "heading": cls._compute_initial_heading(),
+            # todo: change fill to window parameter
             "fill": col.BLACK,
             "size": 5
         }
@@ -144,7 +148,6 @@ class Aircraft:
         )
 
     def _create_tag(self):
-        # txt = self.flight_no+"\n"+self.aircraft+" "+self.airport+"\n"+str(self.alt)+" "+str(self.tgt_alt)+"\n"+str(self.speed)+" "+str(self.tgt_speed)
         self.tag_id = self.canvas.create_text(
             self.x-23,
             self.y-20,
@@ -185,4 +188,10 @@ class Aircraft:
         return self.speed * self.data_service.game_data.screen_speed_conversion_factor
 
     def _get_tag_text(self) -> str:
-        return f"{self.x}_{self.y}"
+        return (
+            f"FLIGHT_NO\n" +
+            f"AIRCRAFT\n" +
+            f"AIRPORT\n" +
+            f"{str(int(self.alt))} {str(int(self.tgt_alt))}\n" +
+            f"{str(int(self.speed))} {str(int(self.tgt_speed))}"
+        )

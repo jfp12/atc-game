@@ -2,11 +2,15 @@ from components.section_base import SectionBase
 from utils.windows_parameters import SingleWindowParameters
 from database.data_management_service import DataManagementService
 from components.aircraft_list import AircraftList
+from components.command_prompt import CommandPrompt
 
 
 class SectionSidebar(SectionBase):
     def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: DataManagementService):
         super().__init__(window, params, kwargs, data_service)
+
+        self.aircraft_list = None
+        self.command_prompt = None
 
         self._create_sidebar_elements()
 
@@ -26,12 +30,23 @@ class SectionSidebar(SectionBase):
             ]
         )
 
+        self._create_command_prompt()
+
     def _create_aircraft_list(self):
-        AircraftList(
+        self.aircraft_list = AircraftList(
+            data_service=self.data_service,
             width=self.width,
             height=self.height,
             window=self.section,
             canvas=self.canvas,
             bg=self.params.aircraft_list_colour,
             params=self.params
+        )
+
+    def _create_command_prompt(self):
+        self.command_prompt = CommandPrompt(
+            self.canvas,
+            self.width,
+            self.height,
+            self.params
         )
