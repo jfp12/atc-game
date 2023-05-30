@@ -2,7 +2,7 @@ import tkinter as tk
 from typing import Tuple
 
 from utils.windows_parameters import SingleWindowParameters
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from base import constants as c
 from base.base import Base
 from aircraft.aircraft import Aircraft
@@ -12,7 +12,7 @@ from aircraft.aircraft import Aircraft
 class AircraftList(Base):
     def __init__(
             self,
-            data_service: DataManagementService,
+            data_service: GameDataManagementService,
             width: int,
             height: int,
             window,

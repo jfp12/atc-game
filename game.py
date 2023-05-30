@@ -1,4 +1,4 @@
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from windows.window_main_menu import WindowMainMenu
 from windows.windows_game import WindowGame
 from utils.window_codes import WindowCodes
@@ -13,7 +13,7 @@ def game():
 
     win_parameters = WindowsParameters()
 
-    data_service = DataManagementService(db_url=DB_URL)
+    data_service = GameDataManagementService(db_url=DB_URL)
     data_service.load_base_data()
 
     while data_service.game_data.opened_window != WindowCodes.EXIT:

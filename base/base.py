@@ -1,12 +1,12 @@
 from components.button import ButtonATC
 from utils.windows_parameters import SingleWindowParameters
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from utils.window_codes import WindowCodes
 
 
 class Base:
     def __init__(
-        self, window, width: float, height: float, params: SingleWindowParameters, data_service: DataManagementService, canvas = None
+        self, window, width: float, height: float, params: SingleWindowParameters, data_service: GameDataManagementService, canvas = None
     ):
         self.data_service = data_service
         self.window = window

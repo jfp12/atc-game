@@ -1,13 +1,13 @@
 import tkinter as tk
 
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 import components
 from utils.windows_parameters import SingleWindowParameters
 from base.base import Base
 
 
 class WindowBase(Base):
-    def __init__(self, data_service: DataManagementService, params: SingleWindowParameters):
+    def __init__(self, data_service: GameDataManagementService, params: SingleWindowParameters):
         self.params = params
         self.s_width = None
         self.s_height = None

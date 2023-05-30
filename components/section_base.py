@@ -1,12 +1,12 @@
 import tkinter as tk
 
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from utils.windows_parameters import SingleWindowParameters
 from base.base import Base
 
 
 class SectionBase(Base):
-    def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: DataManagementService):
+    def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: GameDataManagementService):
         self.params = params
         self.window = window
         self.name = kwargs["name"]

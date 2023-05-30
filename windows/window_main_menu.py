@@ -1,10 +1,10 @@
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from windows.window_base import WindowBase
 from utils.windows_parameters import SingleWindowParameters
 
 
 class WindowMainMenu(WindowBase):
-    def __init__(self, data_service: DataManagementService, win_parameters: SingleWindowParameters):
+    def __init__(self, data_service: GameDataManagementService, win_parameters: SingleWindowParameters):
         super().__init__(data_service, win_parameters)
 
         self._create_window_elements()

@@ -9,7 +9,7 @@ class Airport(Base):
     __tablename__ = "airports"
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    code = Column(String(3), nullable=False)
+    code = Column(String(3), nullable=False, unique=True)
     altitude = Column(Float, nullable=False)
 
 
@@ -28,12 +28,14 @@ class Waypoint(Base):
     __tablename__ = 'waypoints'
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    airport = Column(Integer, ForeignKey("airports.id"), nullable=False)
+    airport_id = Column(Integer, ForeignKey("airports.id"), nullable=False)
     name = Column(String(15), nullable=False)
+    description = Column(String(100), nullable=False)
     x = Column(Float, nullable=False)
     y = Column(Float, nullable=False)
     type = Column(String(15), nullable=False)
     exit_waypoint = Column(Boolean, nullable=False)
+    frequency = Column(Float, nullable=False)
 
 
 class Parameter(Base):
@@ -49,12 +51,11 @@ class Runway(Base):
     __tablename__ = 'runways'
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    airport = Column(Integer, ForeignKey("airports.id"), nullable=False)
+    airport_id = Column(Integer, ForeignKey("airports.id"), nullable=False)
+    runway_group = Column(Integer, nullable=False)
     name = Column(String(3), nullable=False)
-    name_other_end = Column(String(3), nullable=False)
     length = Column(Float, nullable=False)
     heading = Column(Float, nullable=False)
     x_init = Column(Float, nullable=False)
     y_init = Column(Float, nullable=False)
-    active = Column(Integer, nullable=False)
-    main_side = Column(Boolean, nullable=False)
+    UniqueConstraint("airport_id", "name", name="unique_runway_per_airport")

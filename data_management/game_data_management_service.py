@@ -1,9 +1,9 @@
 import random
 
-from sqlalchemy import create_engine
 import pandas as pd
 
 from utils.game_data import GameData
+from data_management.data_management_base import DataManagementBase
 
 
 class Runway:
@@ -13,7 +13,6 @@ class Runway:
         self.heading = runway["heading"]
         self.x_init = runway["x_init"]
         self.y_init = runway["y_init"]
-        self.active = runway["active"]
 
     def get_x(self) -> float:
         return self.x_init
@@ -25,13 +24,13 @@ class Runway:
         return self.heading
 
 
-class DataManagementService:
-    def __init__(self, db_url: str = None):
+class Waypoint:
+    def __init__(self, waypoint: pd.Series):
+        pass
 
-        # Connection variables to data source
-        self.db_url = None
-        self.engine = None
-        self.connection = None
+
+class GameDataManagementService(DataManagementBase):
+    def __init__(self, db_url: str = None):
 
         if db_url:
             self._setup_db_connection(db_url)
@@ -39,7 +38,7 @@ class DataManagementService:
 
         # Data variables
         self.airports = pd.DataFrame()
-        self.game_runways = {}
+        self.runways = {}
         self.flights = pd.DataFrame()
         self.waypoints = pd.DataFrame()
 
@@ -52,35 +51,34 @@ class DataManagementService:
             self._db_save_all_airports()
             self.load_game_data()
 
+    def _db_save_all_airports(self):
+        airports_df = pd.read_sql("SELECT * FROM airports", self.engine)
+        self.set_airports(airports_df)
+
     def load_game_data(self):
         self._db_save_game_runways()
 
     def _db_save_game_runways(self):
         runways_df = pd.read_sql(
-            f"SELECT * FROM runways INNER JOIN runway_ends ON runways.id=runway_ends.runway_id WHERE airport_id = {self.get_game_airport_id()}", self.engine
+            f"SELECT * FROM runways WHERE airport_id = {self.get_game_airport_id()}", self.engine
         )
         self.set_game_runways(runways_df)
 
-    def _db_save_all_airports(self):
-        airports_df = pd.read_sql("SELECT * FROM airports", self.engine)
-        self.set_airports(airports_df)
-
-    def _setup_db_connection(self, db_url: str):
-        self.db_url = db_url
-        self.engine = create_engine(self.db_url)
-
-    def start_db_connection(self):
-        self.connection = self.engine.connect()
-
-    def close_db_connection(self):
-        self.connection = self.engine.connect().close()
+    def _db_save_game_waypoints(self):
+        waypoints_df = pd.read_sql(
+            f"SELECT * FROM waypoints WHERE airport_id = {self.get_game_airport_id()}", self.engine
+        )
 
     def set_airports(self, airports: pd.DataFrame):
         self.airports = airports
 
     def set_game_runways(self, runways: pd.DataFrame):
         for index, runway in runways.iterrows():
-            self.game_runways[runway["name"]] = Runway(runway)
+            self.runways[runway["name"]] = Runway(runway)
+
+    def set_game_waypoints(self, waypoints: pd.DataFrame):
+        for index, waypoint in waypoints.iterrows():
+            self.waypoints[waypoint["name"]] = Waypoint(waypoint)
 
     def get_airports(self) -> pd.DataFrame:
         return self.airports
@@ -95,13 +93,13 @@ class DataManagementService:
         return self.get_game_airport()["id"]
 
     def get_random_game_runway_name(self) -> str:
-        return random.choice(list(self.game_runways.keys()))
+        return random.choice(list(self.runways.keys()))
 
     def get_game_runway_x(self, runway: str) -> float:
-        return self.game_runways[runway].get_x()
+        return self.runways[runway].get_x()
 
     def get_game_runway_y(self, runway: str) -> float:
-        return self.game_runways[runway].get_y()
+        return self.runways[runway].get_y()
 
     def get_game_runway_heading(self, runway: str) -> float:
-        return self.game_runways[runway].get_heading()
+        return self.runways[runway].get_heading()

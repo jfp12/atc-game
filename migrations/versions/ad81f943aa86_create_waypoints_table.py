@@ -21,11 +21,13 @@ def upgrade():
         "waypoints",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True, index=True),
         sa.Column("name", sa.String(15), nullable=False),
+        sa.Column("description", sa.String(100), nullable=False),
         sa.Column("airport_id", sa.Integer, sa.ForeignKey("airports.id"), nullable=False),
         sa.Column("x", sa.Float, nullable=False),
         sa.Column("y", sa.Float, nullable=False),
         sa.Column("type", sa.String(15), nullable=False),
-        sa.Column("exit_waypoint", sa.Boolean, nullable=False)
+        sa.Column("exit_waypoint", sa.Boolean, nullable=False),
+        sa.Column("frequency", sa.Float, nullable=False),
     )
 
 

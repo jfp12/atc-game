@@ -1,12 +1,12 @@
 from components.section_base import SectionBase
 from utils.windows_parameters import SingleWindowParameters
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from components.aircraft_list import AircraftList
 from components.command_prompt import CommandPrompt
 
 
 class SectionSidebar(SectionBase):
-    def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: DataManagementService):
+    def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: GameDataManagementService):
         super().__init__(window, params, kwargs, data_service)
 
         self.aircraft_list = None

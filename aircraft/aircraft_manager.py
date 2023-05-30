@@ -3,14 +3,14 @@ import random
 import math
 
 from utils.windows_parameters import SingleWindowParameters
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from aircraft.aircraft import Aircraft
 from base.base import Base
 
 
 class AircraftManager(Base):
     def __init__(
-            self, window, canvas, width, height, params: SingleWindowParameters, data_service: DataManagementService
+            self, window, canvas, width, height, params: SingleWindowParameters, data_service: GameDataManagementService
     ):
         super().__init__(window, width, height, params, data_service, canvas)
 

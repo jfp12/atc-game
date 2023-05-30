@@ -21,7 +21,13 @@ def upgrade():
         "runways",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True, index=True),
         sa.Column("airport_id", sa.Integer, sa.ForeignKey("airports.id"), nullable=False),
-        sa.Column("active", sa.Boolean, nullable=False)
+        sa.Column("runway_group", sa.Integer, nullable=False),
+        sa.Column("name", sa.String(3), nullable=False),
+        sa.Column("length", sa.Float, nullable=False),
+        sa.Column("heading", sa.Float, nullable=False),
+        sa.Column("x_init", sa.Float, nullable=False),
+        sa.Column("y_init", sa.Float, nullable=False),
+        sa.UniqueConstraint("airport_id", "name", name="unique_runway_per_airport")
     )
 
 

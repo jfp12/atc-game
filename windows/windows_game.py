@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from windows.window_base import WindowBase
 from utils.windows_parameters import SingleWindowParameters
 from components.section_radar import SectionRadar
@@ -9,7 +9,7 @@ from utils.window_codes import WindowCodes
 
 
 class WindowGame(WindowBase):
-    def __init__(self, data_service: DataManagementService, win_parameters: SingleWindowParameters):
+    def __init__(self, data_service: GameDataManagementService, win_parameters: SingleWindowParameters):
         super().__init__(data_service, win_parameters)
 
         self.r_width = None

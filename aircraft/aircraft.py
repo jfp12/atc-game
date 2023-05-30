@@ -2,7 +2,7 @@ import math
 import random
 from typing import Tuple
 
-from database.data_management_service import DataManagementService
+from data_management.game_data_management_service import GameDataManagementService
 from base import constants as c
 from utils.colours import Colours as col
 
@@ -12,7 +12,7 @@ class Aircraft:
     op_type = None
     runway = None
 
-    def __init__(self, kwargs, canvas, data_service: DataManagementService):
+    def __init__(self, kwargs, canvas, data_service: GameDataManagementService):
         self.canvas = canvas
         self.data_service = data_service
 
@@ -65,7 +65,7 @@ class Aircraft:
 
     # todo: create AircraftGenerator class and put there all generation things and call it from create class method
     @classmethod
-    def create(cls, canvas, data_service: DataManagementService, width: float, height: float):
+    def create(cls, canvas, data_service: GameDataManagementService, width: float, height: float):
         cls.data_service = data_service
         cls.op_type = cls._compute_operation_type()
         cls.runway = cls._find_runway()
@@ -152,7 +152,7 @@ class Aircraft:
             self.x-23,
             self.y-20,
             fill=self.fill,
-            font="Arial 8",
+            font="Arial 10",
             text=self._get_tag_text()
         )
 
