@@ -53,6 +53,9 @@ class SingleWindowParameters:
     cmd_prompt_x1: float = None
     cmd_prompt_y1: float = None
 
+    wpt_colour: str
+    wpt_size: float
+
 
 class WindowsParameters:
     def __init__(self):
@@ -120,3 +123,5 @@ class WindowsParameters:
         self.game.cmd_prompt_y0 = 0.57
         self.game.cmd_prompt_x1 = 0.92
         self.game.cmd_prompt_y1 = 0.64
+        self.game.wpt_colour = Colours.WHITE
+        self.game.wpt_size = 0.02

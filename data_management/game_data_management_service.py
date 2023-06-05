@@ -6,7 +6,7 @@ from utils.game_data import GameData
 from data_management.data_management_base import DataManagementBase
 
 
-class Runway:
+class GameDataRunway:
     def __init__(self, runway: pd.Series):
         self.name = runway["name"]
         self.length = runway["length"]
@@ -24,11 +24,6 @@ class Runway:
         return self.heading
 
 
-class Waypoint:
-    def __init__(self, waypoint: pd.Series):
-        pass
-
-
 class GameDataManagementService(DataManagementBase):
     def __init__(self, db_url: str = None):
 
@@ -40,7 +35,7 @@ class GameDataManagementService(DataManagementBase):
         self.airports = pd.DataFrame()
         self.runways = {}
         self.flights = pd.DataFrame()
-        self.waypoints = pd.DataFrame()
+        self.waypoints = {}
 
         # Game data variables
         self.game_data = GameData()
@@ -57,6 +52,7 @@ class GameDataManagementService(DataManagementBase):
 
     def load_game_data(self):
         self._db_save_game_runways()
+        self._db_save_game_waypoints()
 
     def _db_save_game_runways(self):
         runways_df = pd.read_sql(
@@ -68,20 +64,38 @@ class GameDataManagementService(DataManagementBase):
         waypoints_df = pd.read_sql(
             f"SELECT * FROM waypoints WHERE airport_id = {self.get_game_airport_id()}", self.engine
         )
+        self.set_game_waypoints(waypoints_df)
 
     def set_airports(self, airports: pd.DataFrame):
         self.airports = airports
 
     def set_game_runways(self, runways: pd.DataFrame):
         for index, runway in runways.iterrows():
-            self.runways[runway["name"]] = Runway(runway)
+            self.runways[runway["name"]] = GameDataRunway(runway)
 
     def set_game_waypoints(self, waypoints: pd.DataFrame):
+        from components.map import waypoints as waypoint_classes
+
         for index, waypoint in waypoints.iterrows():
-            self.waypoints[waypoint["name"]] = Waypoint(waypoint)
+
+            wpt_type = waypoint["type"]
+            wpt_name = waypoint["name"]
+
+            try:
+                # Get waypoint class name from waypoint type
+                class_name = f"Map{self._convert_name(wpt_type)}"
+
+                # Try to initiate an object of the class determined above
+                self.waypoints[wpt_name] = getattr(waypoint_classes, class_name)(waypoint)
+
+            except AttributeError:
+                raise AttributeError(f"Waypoint of type {wpt_type} is not recognized.")
 
     def get_airports(self) -> pd.DataFrame:
         return self.airports
+
+    def get_game_waypoints(self) -> dict:
+        return self.waypoints
 
     def get_game_airport(self) -> pd.DataFrame:
         return self.airports[self.airports["code"] == self.game_data.airport].iloc[0]
@@ -103,3 +117,6 @@ class GameDataManagementService(DataManagementBase):
 
     def get_game_runway_heading(self, runway: str) -> float:
         return self.runways[runway].get_heading()
+
+    def get_game_waypoint_type(self, waypoint: str) -> str:
+        return self.waypoints[waypoint].get_type()

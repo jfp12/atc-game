@@ -1,3 +1,5 @@
+from re import sub
+
 from sqlalchemy import create_engine
 
 
@@ -15,3 +17,7 @@ class DataManagementBase:
 
     def close_db_connection(self):
         self.connection.close()
+
+    @staticmethod
+    def _convert_name(name: str) -> str:
+        return sub(r"(-)+", " ", name).title().replace(" ", "")
