@@ -32,7 +32,6 @@ class MapRunway(MapComponentBase):
         self._add_name()
 
     def _add_name(self):
-        print(self._compute_text_y_position_based_on_heading())
         self.canvas.create_text(
             self.x0,
             self._compute_text_y_position_based_on_heading(),

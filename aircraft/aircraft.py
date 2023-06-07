@@ -19,8 +19,8 @@ class Aircraft:
         # self.flight_no = kwargs["flight_no"]
         self.op_type = kwargs["op_type"]
 
-        self.alt = kwargs["alt"]
-        self.tgt_alt = kwargs["alt"]
+        self.altitude = kwargs["alt"]
+        self.tgt_altitude = kwargs["alt"]
         self.speed = kwargs["speed"]
         self.tgt_speed = kwargs["speed"]
         self.heading = kwargs["heading"]
@@ -192,6 +192,6 @@ class Aircraft:
             f"FLIGHT_NO\n" +
             f"AIRCRAFT\n" +
             f"AIRPORT\n" +
-            f"{str(int(self.alt))} {str(int(self.tgt_alt))}\n" +
+            f"{str(int(self.altitude))} {str(int(self.tgt_altitude))}\n" +
             f"{str(int(self.speed))} {str(int(self.tgt_speed))}"
         )

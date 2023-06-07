@@ -48,5 +48,6 @@ class SectionSidebar(SectionBase):
             self.canvas,
             self.width,
             self.height,
-            self.params
+            self.params,
+            self.data_service
         )

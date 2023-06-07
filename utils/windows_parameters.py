@@ -1,3 +1,5 @@
+from typing import List
+
 from utils.colours import Colours
 
 
@@ -56,6 +58,10 @@ class SingleWindowParameters:
     wpt_colour: str
     wpt_size: float
     rwy_colour: str
+
+    actions: dict
+    min_altitude: float
+    max_altitude: float
 
 
 class WindowsParameters:
@@ -127,3 +133,10 @@ class WindowsParameters:
         self.game.wpt_colour = Colours.WHITE
         self.game.wpt_size = 0.02
         self.game.rwy_colour = Colours.WHITE
+        self.game.actions = {
+            "altitude": ["a", "alt", "altitude"],
+            "heading": ["h", "hdg", "heading"],
+            "speed": ["s", "spd", "speed"]
+        }
+        self.game.min_altitude = 0
+        self.game.max_altitude = 40000
