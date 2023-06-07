@@ -55,6 +55,7 @@ class SingleWindowParameters:
 
     wpt_colour: str
     wpt_size: float
+    rwy_colour: str
 
 
 class WindowsParameters:
@@ -125,3 +126,4 @@ class WindowsParameters:
         self.game.cmd_prompt_y1 = 0.64
         self.game.wpt_colour = Colours.WHITE
         self.game.wpt_size = 0.02
+        self.game.rwy_colour = Colours.WHITE

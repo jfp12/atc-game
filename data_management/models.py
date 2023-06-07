@@ -58,4 +58,6 @@ class Runway(Base):
     heading = Column(Float, nullable=False)
     x_init = Column(Float, nullable=False)
     y_init = Column(Float, nullable=False)
+    x_final = Column(Float, nullable=False)
+    y_final = Column(Float, nullable=False)
     UniqueConstraint("airport_id", "name", name="unique_runway_per_airport")

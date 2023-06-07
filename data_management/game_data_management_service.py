@@ -70,8 +70,10 @@ class GameDataManagementService(DataManagementBase):
         self.airports = airports
 
     def set_game_runways(self, runways: pd.DataFrame):
+        from components.map.runway import MapRunway
+
         for index, runway in runways.iterrows():
-            self.runways[runway["name"]] = GameDataRunway(runway)
+            self.runways[runway["name"]] = MapRunway(runway)
 
     def set_game_waypoints(self, waypoints: pd.DataFrame):
         from components.map import waypoints as waypoint_classes
@@ -97,6 +99,9 @@ class GameDataManagementService(DataManagementBase):
     def get_game_waypoints(self) -> dict:
         return self.waypoints
 
+    def get_game_runways(self) -> dict:
+        return self.runways
+
     def get_game_airport(self) -> pd.DataFrame:
         return self.airports[self.airports["code"] == self.game_data.airport].iloc[0]
 
@@ -110,10 +115,10 @@ class GameDataManagementService(DataManagementBase):
         return random.choice(list(self.runways.keys()))
 
     def get_game_runway_x(self, runway: str) -> float:
-        return self.runways[runway].get_x()
+        return self.runways[runway].get_x_init()
 
     def get_game_runway_y(self, runway: str) -> float:
-        return self.runways[runway].get_y()
+        return self.runways[runway].get_y_initial()
 
     def get_game_runway_heading(self, runway: str) -> float:
         return self.runways[runway].get_heading()

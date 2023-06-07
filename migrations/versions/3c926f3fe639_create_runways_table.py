@@ -27,6 +27,8 @@ def upgrade():
         sa.Column("heading", sa.Float, nullable=False),
         sa.Column("x_init", sa.Float, nullable=False),
         sa.Column("y_init", sa.Float, nullable=False),
+        sa.Column("x_final", sa.Float, nullable=False),
+        sa.Column("y_final", sa.Float, nullable=False),
         sa.UniqueConstraint("airport_id", "name", name="unique_runway_per_airport")
     )
 
