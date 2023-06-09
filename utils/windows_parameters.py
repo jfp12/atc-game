@@ -40,6 +40,7 @@ class SingleWindowParameters:
 
     aircraft_symbol_colour: str = None
     aircraft_symbol_size: float = None
+    aircraft_max_pos_history: int = None
 
     cmd_prompt_title: str = None
     cmd_prompt_title_font_size: float = None
@@ -124,6 +125,7 @@ class WindowsParameters:
         self.game.aircraft_list_font_text_size = 0.05
         self.game.aircraft_list_font_colour = Colours.BLACK
         self.game.aircraft_symbol_size = 5
+        self.game.aircraft_max_pos_history = 10
         self.game.cmd_prompt_title = "ATC Commands"
         self.game.cmd_prompt_title_font_size = 0.05
         self.game.cmd_prompt_title_font_colour = Colours.WHITE

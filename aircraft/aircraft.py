@@ -34,10 +34,13 @@ class Aircraft:
 
         self.fill = kwargs["fill"]
         self.size = kwargs["size"]
+        self.size_pos = kwargs["size_pos"]
         self.icon_id = None
         self.tag_id = None
         self.displacement_x = 0
         self.displacement_y = 0
+
+        self.pos_history = []
 
         self._create_symbol()
         self._create_tag()
@@ -76,6 +79,7 @@ class Aircraft:
 
         x_init, y_init = cls._compute_initial_position()
 
+        # todo: change parameters to window parameter
         initial_state = {
             "op_type": cls.op_type,
             "alt": cls._compute_initial_altitude(),
@@ -83,9 +87,9 @@ class Aircraft:
             "x_init": x_init * width,
             "y_init": y_init * height,
             "heading": cls._compute_initial_heading(),
-            # todo: change fill to window parameter
             "fill": col.BLACK,
-            "size": 5
+            "size": 5,
+            "size_pos": 1
         }
 
         return cls(initial_state, canvas, data_service, params)
@@ -181,6 +185,7 @@ class Aircraft:
     def update(self):
         self._update_state_variables()
         self._update_aircraft_position()
+        self._update_positions_history()
         self._update_tag_text()
 
         self._move()
@@ -219,12 +224,33 @@ class Aircraft:
         # Get speed difference
         speed_diff = self.tgt_speed - self.speed
 
-        # Update spped
+        # Update speed
         self.speed += np.sign(speed_diff) * min(self.params.rate_change_speed, speed_diff)
 
     def _update_aircraft_position(self):
         self._compute_displacement()
         self._compute_new_position()
+
+    def _update_positions_history(self):
+        self._push_position_to_history()
+        self._delete_position_from_history()
+
+    def _push_position_to_history(self):
+        self.pos_history.append(self._create_old_position())
+
+    def _delete_position_from_history(self):
+        if len(self.pos_history) > self.params.aircraft_max_pos_history:
+            self.canvas.delete(self.pos_history.pop(0))
+
+    def _create_old_position(self):
+        return self.canvas.create_rectangle(
+            self.x - self.size_pos,
+            self.y - self.size_pos,
+            self.x + self.size_pos,
+            self.y + self.size_pos,
+            fill=self.fill,
+            outline=self.fill
+        )
 
     def _compute_displacement(self):
         self.displacement_x = self._get_speed_on_screen() * math.sin(math.pi * self.heading / 180.0)
