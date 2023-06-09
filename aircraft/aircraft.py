@@ -2,6 +2,9 @@ import math
 import random
 from typing import Tuple
 
+import numpy as np
+
+from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 from base import constants as c
 from utils.colours import Colours as col
@@ -12,9 +15,10 @@ class Aircraft:
     op_type = None
     runway = None
 
-    def __init__(self, kwargs, canvas, data_service: GameDataManagementService):
+    def __init__(self, kwargs, canvas, data_service: GameDataManagementService, params: SingleWindowParameters):
         self.canvas = canvas
         self.data_service = data_service
+        self.params = params
 
         # self.flight_no = kwargs["flight_no"]
         self.op_type = kwargs["op_type"]
@@ -65,7 +69,7 @@ class Aircraft:
 
     # todo: create AircraftGenerator class and put there all generation things and call it from create class method
     @classmethod
-    def create(cls, canvas, data_service: GameDataManagementService, width: float, height: float):
+    def create(cls, canvas, data_service: GameDataManagementService, width: float, height: float, params: SingleWindowParameters):
         cls.data_service = data_service
         cls.op_type = cls._compute_operation_type()
         cls.runway = cls._find_runway()
@@ -84,7 +88,7 @@ class Aircraft:
             "size": 5
         }
 
-        return cls(initial_state, canvas, data_service)
+        return cls(initial_state, canvas, data_service, params)
 
     @classmethod
     def _compute_operation_type(cls) -> str:
@@ -123,7 +127,7 @@ class Aircraft:
         if cls.op_type == c.departure:
             return cls.data_service.get_game_runway_heading(cls.runway)
         else:
-            return 360
+            return 180
 
     @classmethod
     def _find_runway(cls) -> str:
@@ -159,22 +163,72 @@ class Aircraft:
         # eval_label = lambda x, y, z: (lambda p: self.add_callsign_to_prompt(x, y, z))
         # game_vars.canvas.tag_bind(tag_id, "<Button-1>", eval_label(self, self.flight_no, cmd_prompt))
 
+    def process_altitude_request(self, new_altitude: str):
+        new_altitude = int(new_altitude)
+
+        self.tgt_altitude = new_altitude
+
+    def process_heading_request(self, new_heading: str):
+        new_heading = int(new_heading)
+
+        self.tgt_heading = new_heading
+
+    def process_speed_request(self, new_speed: str):
+        new_speed = int(new_speed)
+
+        self.tgt_speed = new_speed
+
     def update(self):
         self._update_state_variables()
+        self._update_aircraft_position()
         self._update_tag_text()
 
         self._move()
 
     def _update_state_variables(self):
+        self._update_altitude()
+        self._update_heading()
+        self._update_speed()
+
+    def _update_altitude(self):
+        # Get altitude difference
+        altitude_diff = self.tgt_heading - self.heading
+
+        # Update altitude
+        self.altitude += np.sign(altitude_diff) * min(self.params.rate_change_altitude, altitude_diff)
+
+    def _update_heading(self):
+        # Get heading difference
+        heading_diff = self.tgt_heading - self.heading
+
+        # Get sign correction for cases in which the aircraft might take the longer turn
+        sign_correction = 1 if abs(heading_diff) <= 180 else -1
+
+        # Update heading
+        self.heading += (
+            sign_correction *
+            np.sign(heading_diff) *
+            min(self.params.rate_change_heading, abs(heading_diff))
+        )
+
+        # Keep heading always between 1 and 360
+        self.heading = self.heading % 360
+        self.heading = (not self.heading) * 360 + self.heading
+
+    def _update_speed(self):
+        # Get speed difference
+        speed_diff = self.tgt_speed - self.speed
+
+        # Update spped
+        self.speed += np.sign(speed_diff) * min(self.params.rate_change_speed, speed_diff)
+
+    def _update_aircraft_position(self):
         self._compute_displacement()
         self._compute_new_position()
 
-    def _update_tag_text(self):
-        self.canvas.itemconfigure(self.tag_id, text=self._get_tag_text(), fill=self.fill)
-
     def _compute_displacement(self):
         self.displacement_x = self._get_speed_on_screen() * math.sin(math.pi * self.heading / 180.0)
-        self.displacement_y = self._get_speed_on_screen() * math.cos(math.pi * self.heading / 180.0)
+        self.displacement_y = - self._get_speed_on_screen() * math.cos(math.pi * self.heading / 180.0)
 
     def _compute_new_position(self):
         self.x += self.displacement_x
@@ -187,11 +241,15 @@ class Aircraft:
     def _get_speed_on_screen(self) -> float:
         return self.speed * self.data_service.game_data.screen_speed_conversion_factor
 
+    def _update_tag_text(self):
+        self.canvas.itemconfigure(self.tag_id, text=self._get_tag_text(), fill=self.fill)
+
     def _get_tag_text(self) -> str:
         return (
             f"FLIGHT_NO\n" +
             f"AIRCRAFT\n" +
             f"AIRPORT\n" +
             f"{str(int(self.altitude))} {str(int(self.tgt_altitude))}\n" +
-            f"{str(int(self.speed))} {str(int(self.tgt_speed))}"
+            f"{str(int(self.speed))} {str(int(self.tgt_speed))}\n"
+            f"{str(int(self.heading))} {str(int(self.tgt_heading))}"
         )

@@ -67,7 +67,7 @@ class CommandPrompt:
 
             # Check if value is valid for the requested action, and, if that is the case, perform request
             if getattr(self, f"_check_{_action}_validity")(value):
-                getattr(self, f"_process_{_action}_request")(aircraft, value)
+                getattr(aircraft, f"process_{_action}_request")(value)
 
     def _convert_action_name(self, action: str) -> Union[str, None]:
         for action_name, action_possibilities in self.params.actions.items():
@@ -83,5 +83,16 @@ class CommandPrompt:
             return False
         return True
 
-    def _process_altitude_request(self, aircraft: Aircraft, altitude: str):
-        aircraft.tgt_altitude = int(altitude)
+    def _check_heading_validity(self, heading: str) -> bool:
+        heading = int(heading)
+
+        if heading < self.params.min_heading or heading > self.params.max_heading:
+            return False
+        return True
+
+    def _check_speed_validity(self, speed: str) -> bool:
+        speed = int(speed)
+
+        if speed < self.params.min_heading or speed > self.params.max_heading:
+            return False
+        return True

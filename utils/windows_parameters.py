@@ -62,6 +62,13 @@ class SingleWindowParameters:
     actions: dict
     min_altitude: float
     max_altitude: float
+    min_heading: float
+    max_heading: float
+    min_speed: float
+    max_speed: float
+    rate_change_altitude: float
+    rate_change_heading: float
+    rate_change_speed: float
 
 
 class WindowsParameters:
@@ -140,3 +147,10 @@ class WindowsParameters:
         }
         self.game.min_altitude = 0
         self.game.max_altitude = 40000
+        self.game.min_heading = 1
+        self.game.max_heading = 360
+        self.game.min_speed = 0
+        self.game.max_speed = 500
+        self.game.rate_change_altitude = 200
+        self.game.rate_change_heading = 3
+        self.game.rate_change_speed = 15

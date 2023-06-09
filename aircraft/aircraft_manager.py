@@ -25,7 +25,7 @@ class AircraftManager(Base):
 
         if self._is_aircraft_generated():
             self.data_service.game_data.active_aircraft.append(
-                Aircraft.create(self.canvas, self.data_service, self.width, self.height)
+                Aircraft.create(self.canvas, self.data_service, self.width, self.height, self.params)
             )
 
     def move_aircraft(self):
