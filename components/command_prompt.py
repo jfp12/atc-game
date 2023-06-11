@@ -98,6 +98,6 @@ class CommandPrompt:
     def _check_speed_validity(self, speed: str) -> bool:
         speed = int(speed)
 
-        if speed < self.params.min_heading or speed > self.params.max_heading:
+        if speed < self.params.min_speed or speed > self.params.max_speed:
             return False
         return True
