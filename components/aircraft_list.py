@@ -76,7 +76,7 @@ class AircraftList(Base):
 
         # eval_label = lambda x, y, z: (lambda p: self.add_callsign_to_prompt(x, y, z))
 
-        for aircraft in self.data_service.game_data.active_aircraft:
+        for aircraft in self.data_service.game_data.active_aircraft.values():
             # ils_state = ""
             # if aircraft.ils_status == "on":
             #     ils_state = "ILS " + aircraft.ils_runway
@@ -117,7 +117,7 @@ class AircraftList(Base):
         return (
             f"{aircraft.flight_no.ljust(self.length)} {aircraft.aircraft_type.ljust(self.length)} {op_type} {aircraft.other_airport}\n" +
             f"{self._format_alt(aircraft.altitude)} {self._format_spd(aircraft.speed)} OBJ\n" +
-            f"{self._format_alt(aircraft.altitude)} {self._format_spd(aircraft.tgt_speed)} ILS"
+            f"{self._format_alt(aircraft.tgt_altitude)} {self._format_spd(aircraft.tgt_speed)} ILS"
         )
 
     def _format_alt(self, value: float, ) -> str:

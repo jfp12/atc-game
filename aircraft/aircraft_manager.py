@@ -22,11 +22,11 @@ class AircraftManager(Base):
             new_aircraft = Aircraft.create(self.canvas, self.data_service, self.width, self.height, self.params)
 
             if new_aircraft:
-                self.data_service.game_data.active_aircraft.append(new_aircraft)
+                self.data_service.game_data.active_aircraft[new_aircraft.flight_no] = new_aircraft
 
     def move_aircraft(self):
         aircraft: Aircraft
-        for aircraft in self.data_service.game_data.active_aircraft:
+        for aircraft in self.data_service.game_data.active_aircraft.values():
             aircraft.update()
 
     def _is_aircraft_generated(self) -> bool:

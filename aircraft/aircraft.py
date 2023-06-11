@@ -214,10 +214,10 @@ class Aircraft:
 
     def _update_altitude(self):
         # Get altitude difference
-        altitude_diff = self.tgt_heading - self.heading
+        altitude_diff = self.tgt_altitude - self.altitude
 
         # Update altitude
-        self.altitude += np.sign(altitude_diff) * min(self.params.rate_change_altitude, altitude_diff)
+        self.altitude += np.sign(altitude_diff) * min(self.params.rate_change_altitude, abs(altitude_diff))
 
     def _update_heading(self):
         # Get heading difference
@@ -242,7 +242,7 @@ class Aircraft:
         speed_diff = self.tgt_speed - self.speed
 
         # Update speed
-        self.speed += np.sign(speed_diff) * min(self.params.rate_change_speed, speed_diff)
+        self.speed += np.sign(speed_diff) * min(self.params.rate_change_speed, abs(speed_diff))
 
     def _update_aircraft_position(self):
         self._compute_displacement()

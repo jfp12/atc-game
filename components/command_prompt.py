@@ -54,20 +54,25 @@ class CommandPrompt:
 
         # Try to get the 3 elements of the command. Stop processing if command could not be correctly parsed
         try:
-            flight_no, action, value = [elements for elements in command.split(" ")]
+            flight_no, action, value = [element.lower() for element in command.split(" ")]
         except ValueError:
             return
 
-        for aircraft in self.data_service.game_data.active_aircraft:
-            _action = self._convert_action_name(action)
+        # Try to get the aircraft information based on the flight ID. Stop processing if aircraft is no found
+        try:
+            aircraft = self.data_service.game_data.active_aircraft[flight_no.upper()]
+        except KeyError:
+            return
 
-            # If action is not valid, stop processing
-            if not _action:
-                return
+        _action = self._convert_action_name(action)
 
-            # Check if value is valid for the requested action, and, if that is the case, perform request
-            if getattr(self, f"_check_{_action}_validity")(value):
-                getattr(aircraft, f"process_{_action}_request")(value)
+        # If action is not valid, stop processing
+        if not _action:
+            return
+
+        # Check if value is valid for the requested action, and, if that is the case, perform request
+        if getattr(self, f"_check_{_action}_validity")(value):
+            getattr(aircraft, f"process_{_action}_request")(value)
 
     def _convert_action_name(self, action: str) -> Union[str, None]:
         for action_name, action_possibilities in self.params.actions.items():

@@ -4,7 +4,7 @@ from utils.window_codes import WindowCodes
 class GameData:
 
     opened_window: WindowCodes = WindowCodes.MAIN_MENU
-    active_aircraft = []
+    active_aircraft = {}
     update_frequency: int = 1
     aircraft_generation_rate: float = 0.4
     total_active_aircraft: int = 20
@@ -14,4 +14,4 @@ class GameData:
     airport_id: int = 1
 
     def get_active_flight_numbers(self) -> list:
-        return [a.flight_no for a in self.active_aircraft]
+        return list(self.active_aircraft.keys())
