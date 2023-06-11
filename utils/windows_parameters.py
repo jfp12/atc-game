@@ -119,7 +119,7 @@ class WindowsParameters:
         self.game.aircraft_list_departure_colour = Colours.LIGHT_BLUE
         self.game.aircraft_list_departure_text = "Dep.:"
         self.game.aircraft_list_arrival_colour = Colours.LIGHT_YELLOW
-        self.game.aircraft_list_departure_text = "Arr.:"
+        self.game.aircraft_list_arrival_text = "Arr.:"
         self.game.aircraft_symbol_colour = Colours.BLACK
         self.game.aircraft_list_font_title_size = 0.1
         self.game.aircraft_list_font_text_size = 0.05

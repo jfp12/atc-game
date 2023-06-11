@@ -1,6 +1,6 @@
 import math
 import random
-from typing import Tuple
+from typing import Tuple, Union
 
 import numpy as np
 
@@ -20,7 +20,13 @@ class Aircraft:
         self.data_service = data_service
         self.params = params
 
-        # self.flight_no = kwargs["flight_no"]
+        # Unpack flight information
+        self.flight_no = kwargs["flight_info"]["flight_no"]
+        self.aircraft_type = kwargs["flight_info"]["aircraft_type"]
+        self.aircraft_name = kwargs["flight_info"]["aircraft_name"]
+        self.other_airport = kwargs["flight_info"]["other_airport"]
+        self.other_airport_name = kwargs["flight_info"]["other_airport_name"]
+
         self.op_type = kwargs["op_type"]
 
         self.altitude = kwargs["alt"]
@@ -76,12 +82,18 @@ class Aircraft:
         cls.data_service = data_service
         cls.op_type = cls._compute_operation_type()
         cls.runway = cls._find_runway()
-
         x_init, y_init = cls._compute_initial_position()
+
+        # Check first if there are available flights
+        flight_info = cls._get_flight_information()
+
+        if not flight_info:
+            return
 
         # todo: change parameters to window parameter
         initial_state = {
             "op_type": cls.op_type,
+            "flight_info": flight_info,
             "alt": cls._compute_initial_altitude(),
             "speed": cls._compute_initial_speed(),
             "x_init": x_init * width,
@@ -98,6 +110,7 @@ class Aircraft:
     def _compute_operation_type(cls) -> str:
         operation_type = random.uniform(0.0, 1.0)
         percentage_outbound = cls.data_service.game_data.percentage_outbound
+
         if operation_type <= percentage_outbound:
             return c.departure
         else:
@@ -109,6 +122,10 @@ class Aircraft:
             return "CHANGE"
         else:
             return runway
+
+    @classmethod
+    def _get_flight_information(cls) -> Union[dict, None]:
+        return cls.data_service.fetch_flight_information_for_new_aircraft(cls.op_type)
 
     @classmethod
     def _compute_initial_altitude(cls) -> float:
@@ -272,9 +289,9 @@ class Aircraft:
 
     def _get_tag_text(self) -> str:
         return (
-            f"FLIGHT_NO\n" +
-            f"AIRCRAFT\n" +
-            f"AIRPORT\n" +
+            f"{self.flight_no}\n" +
+            f"{self.aircraft_type}\n" +
+            f"{self.other_airport}\n" +
             f"{str(int(self.altitude))} {str(int(self.tgt_altitude))}\n" +
             f"{str(int(self.speed))} {str(int(self.tgt_speed))}\n"
             f"{str(int(self.heading))} {str(int(self.tgt_heading))}"

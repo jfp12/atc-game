@@ -16,17 +16,13 @@ class AircraftManager(Base):
 
         self.aircraft_list = []
 
-        self._load_aircraft(self.data_service.game_data.loaded_aircraft)
-
-    def _load_aircraft(self, active_aircraft: List[Aircraft]):
-        pass
-
     def create_aircraft(self):
 
         if self._is_aircraft_generated():
-            self.data_service.game_data.active_aircraft.append(
-                Aircraft.create(self.canvas, self.data_service, self.width, self.height, self.params)
-            )
+            new_aircraft = Aircraft.create(self.canvas, self.data_service, self.width, self.height, self.params)
+
+            if new_aircraft:
+                self.data_service.game_data.active_aircraft.append(new_aircraft)
 
     def move_aircraft(self):
         aircraft: Aircraft

@@ -115,7 +115,7 @@ class AircraftList(Base):
             op_type = self.params.aircraft_list_arrival_text
 
         return (
-            f"{'TS123'.ljust(self.length)} {'A320'.ljust(self.length)} {op_type} {aircraft.airport}\n" +
+            f"{aircraft.flight_no.ljust(self.length)} {aircraft.aircraft_type.ljust(self.length)} {op_type} {aircraft.other_airport}\n" +
             f"{self._format_alt(aircraft.altitude)} {self._format_spd(aircraft.speed)} OBJ\n" +
             f"{self._format_alt(aircraft.altitude)} {self._format_spd(aircraft.tgt_speed)} ILS"
         )

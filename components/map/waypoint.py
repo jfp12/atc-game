@@ -1,5 +1,3 @@
-import math
-
 from components.map.map_component_base import MapComponentBase
 
 

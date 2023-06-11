@@ -9,5 +9,6 @@ if __name__ == "__main__":
     data_service.load_file(filename="airports.csv", tablename="airports")
     data_service.load_file(filename="runways.csv", tablename="runways")
     data_service.load_file(filename="waypoints.csv", tablename="waypoints")
+    data_service.load_file(filename="flights.csv", tablename="flights")
 
     data_service.close_db_connection()

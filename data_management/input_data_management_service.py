@@ -53,6 +53,16 @@ class InputDataManagementService(DataManagementBase):
     def load_airports(self, data: pd.DataFrame):
         data.to_sql(models.Airport.__tablename__, self.connection, if_exists="append", index=False)
 
+    def load_flights(self, data: pd.DataFrame):
+        airports = pd.read_sql("SELECT id, code FROM AIRPORTS", self.connection)
+
+        data = pd.merge(data, airports, on="code")
+
+        # Get dataframe in right format
+        data = data.rename(columns={"id": "airport_id"}).drop(columns="code")
+
+        data.to_sql(models.Flight.__tablename__, self.connection, if_exists="append", index=False)
+
     def load_runways(self, data: pd.DataFrame):
         airports = pd.read_sql("SELECT id, code FROM AIRPORTS", self.connection)
 
@@ -71,6 +81,8 @@ class InputDataManagementService(DataManagementBase):
         airports = pd.read_sql("SELECT id, code FROM AIRPORTS", self.connection)
 
         data = pd.merge(data, airports, on="code")
+
+        # Get dataframe in right format
         data = data.rename(columns={"id": "airport_id"}).drop(columns="code")
 
         data.to_sql(models.Waypoint.__tablename__, self.connection, if_exists="append", index=False)

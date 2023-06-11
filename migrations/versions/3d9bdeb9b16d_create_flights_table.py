@@ -25,6 +25,9 @@ def upgrade():
         sa.Column("flight_no", sa.String(10), nullable=False),
         sa.Column("bound", sa.Enum("a", "d", name="operation_type"), nullable=False),
         sa.Column("aircraft_type", sa.String(10), nullable=False),
+        sa.Column("aircraft_name", sa.String(100), nullable=False),
+        sa.Column("other_airport", sa.String(4), nullable=False),
+        sa.Column("other_airport_name", sa.String(100), nullable=False),
         sa.UniqueConstraint('airport_id', 'flight_no', name='unique_flight')
     )
 

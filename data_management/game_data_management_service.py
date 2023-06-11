@@ -1,9 +1,11 @@
 import random
+from typing import Union
 
 import pandas as pd
 
 from utils.game_data import GameData
 from data_management.data_management_base import DataManagementBase
+import base.constants as c
 
 
 class GameDataManagementService(DataManagementBase):
@@ -15,8 +17,9 @@ class GameDataManagementService(DataManagementBase):
 
         # Data variables
         self.airports = pd.DataFrame()
+        self.arrivals = pd.DataFrame()
+        self.departures = pd.DataFrame()
         self.runways = {}
-        self.flights = pd.DataFrame()
         self.waypoints = {}
 
         # Game data variables
@@ -31,6 +34,7 @@ class GameDataManagementService(DataManagementBase):
     def load_game_data(self):
         self._db_save_game_runways()
         self._db_save_game_waypoints()
+        self._db_save_game_flights()
 
     # Airport methods
     def _db_save_all_airports(self):
@@ -91,7 +95,7 @@ class GameDataManagementService(DataManagementBase):
         self.set_game_waypoints(waypoints_df)
 
     def set_game_waypoints(self, waypoints: pd.DataFrame):
-        from components.map import waypoints as waypoint_classes
+        from components.map import waypoint as waypoint_classes
 
         for index, waypoint in waypoints.iterrows():
 
@@ -110,3 +114,26 @@ class GameDataManagementService(DataManagementBase):
 
     def get_game_waypoints(self) -> dict:
         return self.waypoints
+
+    # Flights methods
+    def _db_save_game_flights(self):
+        flight_df = pd.read_sql(
+            f"SELECT * FROM flights WHERE airport_id = {self.get_game_airport_id()}", self.engine
+        )
+        self.set_game_flights(flight_df)
+
+    def set_game_flights(self, flights: pd.DataFrame):
+        self.arrivals = flights[flights["bound"] == c.arrival]
+        self.departures = flights[flights["bound"] == c.departure]
+
+    def fetch_flight_information_for_new_aircraft(self, bound: str) -> Union[dict, None]:
+        flights_df = self.arrivals if bound == c.arrival else self.departures
+
+        # If there are no available flights, return empty dictionary
+        try:
+            return self.filter_flights_on_active_flight_numbers(flights_df).sample().iloc[0].to_dict()
+        except ValueError:
+            return None
+
+    def filter_flights_on_active_flight_numbers(self, flights_df: pd.DataFrame) -> pd.DataFrame:
+        return flights_df[~flights_df["flight_no"].isin(self.game_data.get_active_flight_numbers())]

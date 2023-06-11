@@ -21,6 +21,9 @@ class Flight(Base):
     flight_no = Column(String(10), nullable=False)
     bound = Column(String(1), ENUM("a", "d", name="operation_type", create_type=False), nullable=False)
     aircraft_type = Column(String(10), nullable=False)
+    aircraft_name = Column(String(100), nullable=False)
+    other_airport = Column(String(4), nullable=False)
+    other_airport_name = Column(String(100), nullable=False)
     UniqueConstraint('airport_id', 'flight_no', name='unique_flight')
 
 
