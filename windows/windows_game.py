@@ -47,12 +47,16 @@ class WindowGame(WindowBase):
         self._create_sections(
             [
                 {
-                    "name": SectionRadar.__name__, "bg": self.params.background_colour, "width": self.r_width,
-                    "height": self.r_height, "x": 0, "y": 0
-                },
-                {
                     "name": SectionSidebar.__name__, "bg": self.params.sidebar_colour,
                     "width": (self.w_width - self.r_width), "height": self.r_height, "x": self.r_width, "y": 0
+                }
+            ]
+        )
+        self._create_sections(
+            [
+                {
+                    "name": SectionRadar.__name__, "bg": self.params.background_colour, "width": self.r_width,
+                    "height": self.r_height, "x": 0, "y": 0, "cmd_prompt": self._get_command_prompt_object()
                 }
             ]
         )
@@ -63,3 +67,6 @@ class WindowGame(WindowBase):
 
     def _update_game_step(self):
         self.step = datetime.utcnow()
+
+    def _get_command_prompt_object(self):
+        return self.sections[SectionSidebar.__name__].command_prompt.prompt

@@ -15,7 +15,7 @@ class Aircraft:
     op_type = None
     runway = None
 
-    def __init__(self, kwargs, canvas, data_service: GameDataManagementService, params: SingleWindowParameters):
+    def __init__(self, kwargs, canvas, data_service: GameDataManagementService, params: SingleWindowParameters, cmd_prompt):
         self.canvas = canvas
         self.data_service = data_service
         self.params = params
@@ -49,7 +49,7 @@ class Aircraft:
         self.pos_history = []
 
         self._create_symbol()
-        self._create_tag()
+        self._create_tag(cmd_prompt)
 
         # todo: import the variables below from somewhere else
         self.airport = "LIS"
@@ -78,7 +78,7 @@ class Aircraft:
 
     # todo: create AircraftGenerator class and put there all generation things and call it from create class method
     @classmethod
-    def create(cls, canvas, data_service: GameDataManagementService, width: float, height: float, params: SingleWindowParameters):
+    def create(cls, canvas, data_service: GameDataManagementService, width: float, height: float, params: SingleWindowParameters, cmd_prompt):
         cls.data_service = data_service
         cls.op_type = cls._compute_operation_type()
         cls.runway = cls._find_runway()
@@ -104,7 +104,7 @@ class Aircraft:
             "size_pos": 1
         }
 
-        return cls(initial_state, canvas, data_service, params)
+        return cls(initial_state, canvas, data_service, params, cmd_prompt)
 
     @classmethod
     def _compute_operation_type(cls) -> str:
@@ -172,17 +172,23 @@ class Aircraft:
             outline=self.fill
         )
 
-    def _create_tag(self):
+    def _create_tag(self, cmd_prompt):
+        # Create tag
         self.tag_id = self.canvas.create_text(
-            self.x-23,
-            self.y-20,
+            self.x - 23,
+            self.y - 20,
             fill=self.fill,
             font="Arial 10",
             text=self._get_tag_text()
         )
 
-        # eval_label = lambda x, y, z: (lambda p: self.add_callsign_to_prompt(x, y, z))
-        # game_vars.canvas.tag_bind(tag_id, "<Button-1>", eval_label(self, self.flight_no, cmd_prompt))
+        def _add_callsign_to_prompt(event, flight_no, prompt):
+            prompt.delete(0, 'end')
+            prompt.insert(0, f"{flight_no} ")
+
+        # todo: improve, see suggestion
+        eval_label = lambda x, y, z: (lambda p: _add_callsign_to_prompt(x, y, z))
+        self.canvas.tag_bind(self.tag_id, "<Button-1>", eval_label(self, self.flight_no, cmd_prompt))
 
     def process_altitude_request(self, new_altitude: str):
         new_altitude = int(new_altitude)

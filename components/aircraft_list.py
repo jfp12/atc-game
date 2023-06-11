@@ -18,7 +18,8 @@ class AircraftList(Base):
             window,
             canvas,
             bg: str,
-            params: SingleWindowParameters
+            params: SingleWindowParameters,
+            cmd_prompt
     ):
         super().__init__(
             window,
@@ -34,6 +35,7 @@ class AircraftList(Base):
         self.bg = bg
         self.scrollable_frame = None
         self.length = None
+        self.cmd_prompt = cmd_prompt
 
         self._create()
         self._add_title()
@@ -74,7 +76,11 @@ class AircraftList(Base):
         for arc in self.scrollable_frame.winfo_children():
             arc.destroy()
 
-        # eval_label = lambda x, y, z: (lambda p: self.add_callsign_to_prompt(x, y, z))
+        def _add_callsign_to_prompt(event, flight_no, prompt):
+            prompt.delete(0, 'end')
+            prompt.insert(0, f"{flight_no} ")
+
+        eval_label = lambda x, y, z: (lambda p: _add_callsign_to_prompt(x, y, z))
 
         for aircraft in self.data_service.game_data.active_aircraft.values():
             # ils_state = ""
@@ -100,7 +106,7 @@ class AircraftList(Base):
                 )
             )
             label[-1].pack()
-            # label[-1].bind("<Button-1>", eval_label(self, aircraft.flight_no, cmd_prompt))
+            label[-1].bind("<Button-1>", eval_label(self, aircraft.flight_no, self.cmd_prompt))
 
     def _get_label_text(self, aircraft: Aircraft) -> str:
         # txt = aircraft.flight_no.ljust(l) + aircraft.aircraft.ljust(l) + obj + '\n' + \

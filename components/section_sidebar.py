@@ -15,7 +15,6 @@ class SectionSidebar(SectionBase):
         self._create_sidebar_elements()
 
     def _create_sidebar_elements(self):
-        self._create_aircraft_list()
 
         self._create_buttons(
             [
@@ -31,6 +30,7 @@ class SectionSidebar(SectionBase):
         )
 
         self._create_command_prompt()
+        self._create_aircraft_list()
 
     def _create_aircraft_list(self):
         self.aircraft_list = AircraftList(
@@ -40,7 +40,8 @@ class SectionSidebar(SectionBase):
             window=self.section,
             canvas=self.canvas,
             bg=self.params.aircraft_list_colour,
-            params=self.params
+            params=self.params,
+            cmd_prompt=self.command_prompt.prompt
         )
 
     def _create_command_prompt(self):

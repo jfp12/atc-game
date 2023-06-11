@@ -10,16 +10,19 @@ from base.base import Base
 
 class AircraftManager(Base):
     def __init__(
-            self, window, canvas, width, height, params: SingleWindowParameters, data_service: GameDataManagementService
+            self, window, canvas, width, height, params: SingleWindowParameters, data_service: GameDataManagementService, cmd_prompt
     ):
         super().__init__(window, width, height, params, data_service, canvas)
 
         self.aircraft_list = []
+        self.cmd_prompt = cmd_prompt
 
     def create_aircraft(self):
 
         if self._is_aircraft_generated():
-            new_aircraft = Aircraft.create(self.canvas, self.data_service, self.width, self.height, self.params)
+            new_aircraft = Aircraft.create(
+                self.canvas, self.data_service, self.width, self.height, self.params, self.cmd_prompt
+            )
 
             if new_aircraft:
                 self.data_service.game_data.active_aircraft[new_aircraft.flight_no] = new_aircraft

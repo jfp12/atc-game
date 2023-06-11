@@ -12,14 +12,15 @@ class SectionRadar(SectionBase):
         self.aircraft_manager = None
         self.map = Map.draw(self.canvas, self.width, self.height, self.data_service, self.params)
 
-        self._initialize_aircraft_manager()
+        self._initialize_aircraft_manager(kwargs["cmd_prompt"])
 
-    def _initialize_aircraft_manager(self):
+    def _initialize_aircraft_manager(self, cmd_prompt):
         self.aircraft_manager = AircraftManager(
             self.window,
             self.canvas,
             self.width,
             self.height,
             self.params,
-            self.data_service
+            self.data_service,
+            cmd_prompt
         )
