@@ -72,6 +72,9 @@ class GameDataManagementService(DataManagementBase):
     def get_game_runways(self) -> dict:
         return self.runways
 
+    def get_game_active_runway(self):
+        return self.runways["05"]
+
     def get_random_game_runway_name(self) -> str:
         return random.choice(list(self.runways.keys()))
 
@@ -114,6 +117,9 @@ class GameDataManagementService(DataManagementBase):
 
     def get_game_waypoints(self) -> dict:
         return self.waypoints
+
+    def get_game_random_waypoint(self):
+        return random.choice(list(self.waypoints.values()))
 
     # Flights methods
     def _db_save_game_flights(self):

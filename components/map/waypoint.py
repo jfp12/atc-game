@@ -31,6 +31,15 @@ class MapWaypoint(MapComponentBase):
             text=self.name
         )
 
+    def get_x(self) -> float:
+        return self.x * self.width
+
+    def get_y(self) -> float:
+        return self.y * self.height
+
+    def get_name(self) -> str:
+        return self.name
+
 
 class MapNdb(MapWaypoint):
 

@@ -3,22 +3,38 @@ import random
 from typing import Tuple, Union
 
 import numpy as np
+from shapely.geometry import Point
 
 from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 from base import constants as c
 from utils.colours import Colours as col
+from base import constants as c
+from components.map.runway import MapRunway
+from components.map.waypoint import MapWaypoint
 
 
 class Aircraft:
     data_service = None
     op_type = None
     runway = None
+    waypoint = None
+    params = None
 
-    def __init__(self, kwargs, canvas, data_service: GameDataManagementService, params: SingleWindowParameters, cmd_prompt):
+    def __init__(
+        self,
+        kwargs,
+        canvas,
+        data_service: GameDataManagementService,
+        params: SingleWindowParameters,
+        cmd_prompt,
+        width: float
+    ):
         self.canvas = canvas
         self.data_service = data_service
         self.params = params
+        self.cmd_prompt = cmd_prompt
+        self.width = width
 
         # Unpack flight information
         self.flight_no = kwargs["flight_info"]["flight_no"]
@@ -28,6 +44,8 @@ class Aircraft:
         self.other_airport_name = kwargs["flight_info"]["other_airport_name"]
 
         self.op_type = kwargs["op_type"]
+        self.objective = kwargs["objective"]
+        self.objective_name = self.objective.get_name()
 
         self.altitude = kwargs["alt"]
         self.tgt_altitude = kwargs["alt"]
@@ -38,30 +56,31 @@ class Aircraft:
         self.x = kwargs["x_init"]
         self.y = kwargs["y_init"]
 
+        # Aircraft status (flight progress)
+        self.phase = c.taxi if self.op_type == c.departure else c.airborne
+        self.to_be_hand_over = False
+
         self.fill = kwargs["fill"]
         self.size = kwargs["size"]
         self.size_pos = kwargs["size_pos"]
+
         self.icon_id = None
         self.tag_id = None
+
         self.displacement_x = 0
         self.displacement_y = 0
-
         self.pos_history = []
 
-        self._create_symbol()
-        self._create_tag(cmd_prompt)
+        self.points = self.params.aircraft_default_points
 
         # todo: import the variables below from somewhere else
         self.airport = "LIS"
 
-        # self.aircraft = kwargs["aircraft"]
-        # self.icon_id = kwargs["icon_id"]
-        # self.tag_id = kwargs["tag_id"]
-        # self.objective = kwargs["objective"]
+        self._create_symbol_on_map()
+
         # self.collision = "black"
         # self.new_orange = False
         # self.new_red = False
-        # self.visibility = visibility
         # self.moving = moving
         # self.on_ground = on_ground
         # self.points = 100
@@ -70,18 +89,26 @@ class Aircraft:
         # self.distance_to_runway = 0
         # self.relative_angle_to_runway = 0
         # self.landing = False
-        # self.previous_x = [-1] * 10
-        # self.previous_y = [-1] * 10
-        # self.last_pos_id = [-1] * 10
         # self.dep_wpt_x = dep_wpt_x
         # self.dep_wpt_y = dep_wpt_y
 
     # todo: create AircraftGenerator class and put there all generation things and call it from create class method
     @classmethod
-    def create(cls, canvas, data_service: GameDataManagementService, width: float, height: float, params: SingleWindowParameters, cmd_prompt):
+    def create(
+        cls,
+        canvas,
+        data_service: GameDataManagementService,
+        width: float,
+        height: float,
+        params: SingleWindowParameters,
+        cmd_prompt
+    ):
+        cls.params = params
         cls.data_service = data_service
         cls.op_type = cls._compute_operation_type()
         cls.runway = cls._find_runway()
+        # todo: departures also have a waypoint for now
+        cls.waypoint = cls._find_waypoint()
         x_init, y_init = cls._compute_initial_position()
 
         # Check first if there are available flights
@@ -99,12 +126,13 @@ class Aircraft:
             "x_init": x_init * width,
             "y_init": y_init * height,
             "heading": cls._compute_initial_heading(),
+            "objective": cls._compute_objective(),
             "fill": col.BLACK,
             "size": 5,
             "size_pos": 1
         }
 
-        return cls(initial_state, canvas, data_service, params, cmd_prompt)
+        return cls(initial_state, canvas, data_service, params, cmd_prompt, width)
 
     @classmethod
     def _compute_operation_type(cls) -> str:
@@ -117,11 +145,25 @@ class Aircraft:
             return c.arrival
 
     @classmethod
-    def _compute_objective(cls, runway: str) -> str:
+    def _compute_objective(cls) -> Union[MapRunway, MapWaypoint]:
         if cls.op_type == c.departure:
-            return "CHANGE"
+            return cls.waypoint
         else:
-            return runway
+            return cls.runway
+
+    @classmethod
+    def _compute_initial_position(cls) -> Tuple[float, float]:
+
+        if cls.op_type == c.departure:
+            return cls.runway.get_x_init(), cls.runway.get_y_init()
+        else:
+            return cls._get_coordinates_initial_for_arrival()
+
+    @classmethod
+    def _get_coordinates_initial_for_arrival(cls) -> Tuple[float, float]:
+        possible_points = [[x, y] for y in cls.params.map_spawn_y for x in cls.params.map_spawn_x if x != y]
+
+        return random.choice(possible_points)
 
     @classmethod
     def _get_flight_information(cls) -> Union[dict, None]:
@@ -146,33 +188,32 @@ class Aircraft:
     @classmethod
     def _compute_initial_heading(cls) -> float:
         if cls.op_type == c.departure:
-            return cls.data_service.get_game_runway_heading(cls.runway)
+            return cls.runway.get_heading()
         else:
             return 180
 
     @classmethod
-    def _find_runway(cls) -> str:
-        return cls.data_service.get_random_game_runway_name()
+    def _find_runway(cls) -> MapRunway:
+        return cls.data_service.get_game_active_runway()
 
     @classmethod
-    def _compute_initial_position(cls) -> Tuple[float, float]:
+    def _find_waypoint(cls):
+        return cls.data_service.get_game_random_waypoint()
 
-        if cls.op_type == c.departure:
-            return cls.data_service.get_game_runway_x(cls.runway), cls.data_service.get_game_runway_y(cls.runway)
-        else:
-            return 0.3, 0.3
+    def _create_symbol_on_map(self):
+        if self.phase != c.taxi:
+            self.icon_id = self.canvas.create_rectangle(
+                self.x-self.size,
+                self.y-self.size,
+                self.x+self.size,
+                self.y+self.size,
+                fill=self.fill,
+                outline=self.fill
+            )
 
-    def _create_symbol(self):
-        self.icon_id = self.canvas.create_rectangle(
-            self.x-self.size,
-            self.y-self.size,
-            self.x+self.size,
-            self.y+self.size,
-            fill=self.fill,
-            outline=self.fill
-        )
+            self._create_tag()
 
-    def _create_tag(self, cmd_prompt):
+    def _create_tag(self):
         # Create tag
         self.tag_id = self.canvas.create_text(
             self.x - 23,
@@ -188,7 +229,16 @@ class Aircraft:
 
         # todo: improve, see suggestion
         eval_label = lambda x, y, z: (lambda p: _add_callsign_to_prompt(x, y, z))
-        self.canvas.tag_bind(self.tag_id, "<Button-1>", eval_label(self, self.flight_no, cmd_prompt))
+        self.canvas.tag_bind(self.tag_id, "<Button-1>", eval_label(self, self.flight_no, self.cmd_prompt))
+
+    def _delete_symbol_on_map(self):
+        # Delete aircraft icon and tag
+        self.canvas.delete(self.icon_id)
+        self.canvas.delete(self.tag_id)
+
+        # Remove all historic positions icons
+        for pos_id in self.pos_history:
+            self.canvas.delete(pos_id)
 
     def process_altitude_request(self, new_altitude: str):
         new_altitude = int(new_altitude)
@@ -205,18 +255,70 @@ class Aircraft:
 
         self.tgt_speed = new_speed
 
+    def process_lineup_request(self, runway: str):
+        # Only departures that were taxiing can accept a take-off clearance
+        if self.op_type == c.departure and self.phase == c.taxi and self.runway.get_lineup() is False:
+            if runway == self.runway.name:
+                self.phase = c.lineup
+
+                self.runway.lineup()
+
+                self._create_symbol_on_map()
+
+    def process_takeoff_request(self, runway: str):
+        # Only departures that were taxiing or lining up can accept a take-off clearance
+        if self.op_type == c.departure and (self.phase == c.taxi or self.phase == c.lineup):
+            # The request can only happen if there is a valid clearance for speed and altitude
+            if (
+                self.tgt_speed >= self.params.min_speed and
+                self.tgt_altitude >= self.params.min_altitude
+            ):
+                self.phase = c.takeoff
+
+                self.runway.stop_lineup()
+
+                if self.icon_id is None:
+                    self._create_symbol_on_map()
+
     def update(self):
-        self._update_state_variables()
-        self._update_aircraft_position()
-        self._update_positions_history()
+        # Execute state update according to flight phase
+        getattr(self, f"_update_{self.phase}")()
+
+        if self._check_if_objective_was_reached():
+            self.to_be_hand_over = True
+
+    def _update_taxi(self):
+        """
+        There are no updates to be made during taxi
+        """
+        pass
+
+    def _update_lineup(self):
         self._update_tag_text()
 
-        self._move()
+    def _update_takeoff(self):
+        self._update_speed(takeoff=True)
 
-    def _update_state_variables(self):
+        if self.speed >= self.params.min_speed:
+            self.phase = c.airborne
+
+        # Update position
+        self._update_aircraft_position()
+        self._update_positions_history()
+
+        self._move_on_map()
+
+    def _update_airborne(self):
+        # Update state
         self._update_altitude()
         self._update_heading()
         self._update_speed()
+
+        # Update position
+        self._update_aircraft_position()
+        self._update_positions_history()
+
+        self._move_on_map()
 
     def _update_altitude(self):
         # Get altitude difference
@@ -243,12 +345,16 @@ class Aircraft:
         self.heading = self.heading % 360
         self.heading = (not self.heading) * 360 + self.heading
 
-    def _update_speed(self):
-        # Get speed difference
-        speed_diff = self.tgt_speed - self.speed
+    def _update_speed(self, takeoff: bool = False):
+        if takeoff:
+            # For take-off, a more gradual speed change is calculated
+            self.speed += max(2, round(15 * (1 - 1 / (self.speed / 30 + 1))))
+        else:
+            # Get speed difference
+            speed_diff = self.tgt_speed - self.speed
 
-        # Update speed
-        self.speed += np.sign(speed_diff) * min(self.params.rate_change_speed, abs(speed_diff))
+            # Update speed
+            self.speed += np.sign(speed_diff) * min(self.params.rate_change_speed, abs(speed_diff))
 
     def _update_aircraft_position(self):
         self._compute_displacement()
@@ -283,15 +389,38 @@ class Aircraft:
         self.x += self.displacement_x
         self.y += self.displacement_y
 
-    def _move(self):
+    def _move_on_map(self):
         self.canvas.move(self.icon_id, self.displacement_x, self.displacement_y)
         self.canvas.move(self.tag_id, self.displacement_x, self.displacement_y)
 
-    def _get_speed_on_screen(self) -> float:
-        return self.speed * self.data_service.game_data.screen_speed_conversion_factor
+        self._update_tag_text()
 
     def _update_tag_text(self):
         self.canvas.itemconfigure(self.tag_id, text=self._get_tag_text(), fill=self.fill)
+
+    def _check_if_objective_was_reached(self) -> bool:
+        if self.op_type == c.departure:
+            dist_to_wpt = self._get_distance(self.x, self.y, self.objective.get_x(), self.objective.get_y())
+            current_alt = self.altitude
+
+            # todo: make self.params.obj_dep_min_distance * self.width be returned by params/data_service class
+            if (
+                dist_to_wpt <= self.params.obj_dep_min_distance * self.width and
+                current_alt >= self.params.obj_dep_min_altitude
+            ):
+                return True
+            else:
+                return False
+
+    def remove_aircraft_from_radar(self):
+        # Delete symbol
+        self._delete_symbol_on_map()
+
+        # Add points to game points
+        self.data_service.game_data.add_to_game_points(self.points)
+
+        # Delete from list
+        self.data_service.game_data.remove_from_active_aircraft(self.flight_no)
 
     def _get_tag_text(self) -> str:
         return (
@@ -302,3 +431,9 @@ class Aircraft:
             f"{str(int(self.speed))} {str(int(self.tgt_speed))}\n"
             f"{str(int(self.heading))} {str(int(self.tgt_heading))}"
         )
+
+    def _get_speed_on_screen(self) -> float:
+        return self.speed * self.data_service.game_data.screen_speed_conversion_factor
+
+    def _get_distance(self, x1: float, y1: float, x2: float, y2: float) -> float:
+        return Point(x1, y1).distance((Point(x2, y2)))

@@ -41,6 +41,7 @@ class SingleWindowParameters:
     aircraft_symbol_colour: str = None
     aircraft_symbol_size: float = None
     aircraft_max_pos_history: int = None
+    aircraft_default_points: int = None
 
     cmd_prompt_title: str = None
     cmd_prompt_title_font_size: float = None
@@ -56,20 +57,27 @@ class SingleWindowParameters:
     cmd_prompt_x1: float = None
     cmd_prompt_y1: float = None
 
-    wpt_colour: str
-    wpt_size: float
-    rwy_colour: str
+    wpt_colour: str = None
+    wpt_size: float = None
+    rwy_colour: str = None
 
-    actions: dict
-    min_altitude: float
-    max_altitude: float
-    min_heading: float
-    max_heading: float
-    min_speed: float
-    max_speed: float
-    rate_change_altitude: float
-    rate_change_heading: float
-    rate_change_speed: float
+    actions: dict = None
+    min_altitude: float = None
+    max_altitude: float = None
+    min_heading: float = None
+    max_heading: float = None
+    min_speed: float = None
+    max_speed: float = None
+    rate_change_altitude: float = None
+    rate_change_heading: float = None
+    rate_change_speed: float = None
+
+    map_spawn_x: list = None
+    map_spawn_y: list = None
+
+    obj_dep_min_distance: float = None
+    obj_dep_min_altitude: float = None
+
 
 
 class WindowsParameters:
@@ -126,6 +134,7 @@ class WindowsParameters:
         self.game.aircraft_list_font_colour = Colours.BLACK
         self.game.aircraft_symbol_size = 5
         self.game.aircraft_max_pos_history = 10
+        self.game.aircraft_default_points = 100
         self.game.cmd_prompt_title = "ATC Commands"
         self.game.cmd_prompt_title_font_size = 0.05
         self.game.cmd_prompt_title_font_colour = Colours.WHITE
@@ -145,14 +154,20 @@ class WindowsParameters:
         self.game.actions = {
             "altitude": ["a", "alt", "altitude"],
             "heading": ["h", "hdg", "heading"],
-            "speed": ["s", "spd", "speed"]
+            "speed": ["s", "spd", "speed"],
+            "takeoff": ["t", "to", "takeoff", "take-off"],
+            "lineup": ["lu", "line-up", "lineup"]
         }
-        self.game.min_altitude = 0
+        self.game.min_altitude = 100
         self.game.max_altitude = 40000
         self.game.min_heading = 1
         self.game.max_heading = 360
-        self.game.min_speed = 0
+        self.game.min_speed = 150
         self.game.max_speed = 500
         self.game.rate_change_altitude = 200
         self.game.rate_change_heading = 3
         self.game.rate_change_speed = 15
+        self.game.map_spawn_x = [0.2, 0.5, 0.8]
+        self.game.map_spawn_y = [0.2, 0.5, 0.8]
+        self.game.obj_dep_min_distance = 0.05
+        self.game.obj_dep_min_altitude = 5000

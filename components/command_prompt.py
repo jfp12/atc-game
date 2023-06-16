@@ -101,3 +101,9 @@ class CommandPrompt:
         if speed < self.params.min_speed or speed > self.params.max_speed:
             return False
         return True
+
+    def _check_lineup_validity(self, runway) -> bool:
+        return True
+
+    def _check_takeoff_validity(self, runway) -> bool:
+        return True

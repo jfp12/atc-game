@@ -41,7 +41,11 @@ class WindowGame(WindowBase):
 
         self.sections[SectionRadar.__name__].aircraft_manager.move_aircraft()
 
+        self.sections[SectionRadar.__name__].aircraft_manager.hand_aircraft_over()
+
         self.sections[SectionSidebar.__name__].aircraft_list.add_aircraft_to_list()
+
+        print(self.data_service.game_data.game_points)
 
     def _create_window_elements(self):
         self._create_sections(

@@ -20,6 +20,8 @@ class MapRunway(MapComponentBase):
         self.x1 = None
         self.y1 = None
 
+        self.aircraft_lineup = False
+
     def define_ends(self):
         self.x0 = self.x_init * self.width
         self.y0 = self.y_init * self.height
@@ -49,8 +51,17 @@ class MapRunway(MapComponentBase):
     def get_x_init(self) -> float:
         return self.x_init
 
-    def get_y_initial(self) -> float:
+    def get_y_init(self) -> float:
         return self.y_init
 
     def get_heading(self) -> float:
         return self.heading
+
+    def get_lineup(self):
+        return self.aircraft_lineup
+
+    def lineup(self):
+        self.aircraft_lineup = True
+
+    def stop_lineup(self):
+        self.aircraft_lineup = False

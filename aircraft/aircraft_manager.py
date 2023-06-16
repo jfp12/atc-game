@@ -28,9 +28,21 @@ class AircraftManager(Base):
                 self.data_service.game_data.active_aircraft[new_aircraft.flight_no] = new_aircraft
 
     def move_aircraft(self):
-        aircraft: Aircraft
         for aircraft in self.data_service.game_data.active_aircraft.values():
             aircraft.update()
+
+    def hand_aircraft_over(self):
+        to_hand_over = []
+        active_aircraft = self.data_service.game_data.active_aircraft
+
+        # Identify which aircraft should be removed
+        for aircraft in active_aircraft.values():
+            if aircraft.to_be_hand_over:
+                to_hand_over.append(aircraft.flight_no)
+
+        # Remove the aircraft identified
+        for hand_over in to_hand_over:
+            active_aircraft[hand_over].remove_aircraft_from_radar()
 
     def _is_aircraft_generated(self) -> bool:
         creation = random.uniform(0.0, 1.0)
