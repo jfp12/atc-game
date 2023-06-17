@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 
 from components.map.map_component_base import MapComponentBase
@@ -21,6 +23,33 @@ class MapRunway(MapComponentBase):
         self.y1 = None
 
         self.aircraft_lineup = False
+
+    def check_ils_interception(self, x: float, y: float):
+        self._check_localizer_interception(x, y)
+
+    def _check_localizer_interception(self, x: float, y: float):
+
+        # Get angle between runway start and aircraft
+        angle = self.get_angle_relative_to_aircraft(x, y)
+
+        # Get angle different between runway heading and angle between aircraft and runway
+        angle_difference = min(abs(angle - self.heading), 360 - abs(angle - self.heading))
+
+
+    def get_angle_relative_to_aircraft(self, x: float, y: float) -> float:
+        # Get arc-tangent values
+        xx = (self.get_x_init() - x)
+        yy = (self.get_y_init() - y)
+
+        # Get angle between aircraft's initial position and runway start point
+        angle = math.atan2(xx, -yy) * 180 / math.pi
+        if angle < 0:
+            angle += 360
+
+        return angle
+
+    def _create_ils_localizer_area(self):
+        pass
 
     def define_ends(self):
         self.x0 = self.x_init * self.width
@@ -52,10 +81,10 @@ class MapRunway(MapComponentBase):
         return self.name
 
     def get_x_init(self) -> float:
-        return self.x_init
+        return self.x_init * self.width
 
     def get_y_init(self) -> float:
-        return self.y_init
+        return self.y_init * self.height
 
     def get_heading(self) -> float:
         return self.heading

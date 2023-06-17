@@ -78,18 +78,6 @@ class GameDataManagementService(DataManagementBase):
     def get_random_game_runway_name(self) -> str:
         return random.choice(list(self.runways.keys()))
 
-    def get_game_runway_x(self, runway: str) -> float:
-        return self.runways[runway].get_x_init()
-
-    def get_game_runway_y(self, runway: str) -> float:
-        return self.runways[runway].get_y_initial()
-
-    def get_game_runway_heading(self, runway: str) -> float:
-        return self.runways[runway].get_heading()
-
-    def get_game_waypoint_type(self, waypoint: str) -> str:
-        return self.waypoints[waypoint].get_type()
-
     # Waypoint methods
     def _db_save_game_waypoints(self):
         waypoints_df = pd.read_sql(
@@ -120,6 +108,9 @@ class GameDataManagementService(DataManagementBase):
 
     def get_game_random_waypoint(self):
         return random.choice(list(self.waypoints.values()))
+
+    def get_game_waypoint_type(self, waypoint: str) -> str:
+        return self.waypoints[waypoint].get_type()
 
     # Flights methods
     def _db_save_game_flights(self):

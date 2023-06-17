@@ -64,8 +64,10 @@ class SingleWindowParameters:
     actions: dict = None
     min_altitude: float = None
     max_altitude: float = None
+    max_altitude_ils: float = None
     min_heading: float = None
     max_heading: float = None
+    init_heading_variation: float = None
     min_speed: float = None
     max_speed: float = None
     rate_change_altitude: float = None
@@ -92,6 +94,7 @@ class SingleWindowParameters:
     log_list_foul_colour: str = None
     log_list_msg_dep_ready: str = None
     log_list_dep_takeoff_invalid_spd_hdg: str = None
+    log_list_msg_arr_ready: str = None
 
 
 class WindowsParameters:
@@ -170,19 +173,22 @@ class WindowsParameters:
             "heading": ["h", "hdg", "heading"],
             "speed": ["s", "spd", "speed"],
             "takeoff": ["t", "to", "takeoff", "take-off"],
-            "lineup": ["lu", "line-up", "lineup"]
+            "lineup": ["lu", "line-up", "lineup"],
+            "ils": ["ils"],
         }
         self.game.min_altitude = 100
         self.game.max_altitude = 40000
+        self.game.max_altitude_ils = 3000
         self.game.min_heading = 1
         self.game.max_heading = 360
+        self.game.init_heading_variation = 30
         self.game.min_speed = 150
         self.game.max_speed = 500
         self.game.rate_change_altitude = 200
         self.game.rate_change_heading = 3
         self.game.rate_change_speed = 15
-        self.game.map_spawn_x = [0.2, 0.5, 0.8]
-        self.game.map_spawn_y = [0.2, 0.5, 0.8]
+        self.game.map_spawn_x = [0.1, 0.5, 0.9]
+        self.game.map_spawn_y = [0.1, 0.5, 0.9]
         self.game.obj_dep_min_distance = 0.05
         self.game.obj_dep_min_altitude = 5000
 
@@ -206,3 +212,4 @@ class WindowsParameters:
         self.game.log_list_foul_colour = Colours.RED
         self.game.log_list_msg_dep_ready = "{flight_no}: Good {period}, holding short of runway {rwy}."
         self.game.log_list_dep_takeoff_invalid_spd_hdg = "{flight_no}: Cannot take-off, we don't have a speed and heading clearance."
+        self.game.log_list_msg_arr_ready = "{flight_no}: Good {period}, with you at {alt}ft, heading {hdg}."

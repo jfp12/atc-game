@@ -96,6 +96,21 @@ class LogList(Base):
 
         return message, fill, self.params.log_list_duration
 
+    def _prepare_arr_ready_log(self, aircraft) -> Tuple[str, str, int]:
+        # Get current period of the day
+        now = datetime.utcnow()
+        period = [per["t"] for per in self.params.day_periods.values() if per["h"][0] <= now.hour <= per["h"][1]][0]
+
+        # Prepare message
+        message = self.params.log_list_msg_arr_ready.format(
+            flight_no=aircraft.flight_no, period=period, alt=int(aircraft.altitude), hdg=int(aircraft.heading)
+        )
+
+        # Get colour
+        fill = self.params.log_list_info_colour
+
+        return message, fill, self.params.log_list_duration
+
     def _prepare_dep_takeoff_invalid_spd_hdg_log(self, aircraft) -> Tuple[str, str, int]:
         # Prepare message
         message = self.params.log_list_dep_takeoff_invalid_spd_hdg.format(flight_no=aircraft.flight_no)

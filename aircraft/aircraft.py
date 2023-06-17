@@ -79,7 +79,7 @@ class Aircraft:
 
         self._create_symbol_on_map()
 
-        self.log_list.add_log({"aircraft": self, "type": c.dep_ready})
+        self.log_list.add_log({"aircraft": self, "type": c.dep_ready if self.op_type == c.departure else c.arr_ready})
 
         # self.collision = "black"
         # self.new_orange = False
@@ -116,7 +116,7 @@ class Aircraft:
         cls.runway = cls._find_runway()
         # todo: departures also have a waypoint for now
         cls.waypoint = cls._find_waypoint()
-        x_init, y_init = cls._compute_initial_position()
+        x_init, y_init = cls._compute_initial_position(width, height)
 
         # Check first if there are available flights
         flight_info = cls._get_flight_information()
@@ -130,9 +130,9 @@ class Aircraft:
             "flight_info": flight_info,
             "alt": cls._compute_initial_altitude(),
             "speed": cls._compute_initial_speed(),
-            "x_init": x_init * width,
-            "y_init": y_init * height,
-            "heading": cls._compute_initial_heading(),
+            "x_init": x_init,
+            "y_init": y_init,
+            "heading": cls._compute_initial_heading(x_init, y_init),
             "objective": cls._compute_objective(),
             "fill": col.BLACK,
             "size": 5,
@@ -159,18 +159,20 @@ class Aircraft:
             return cls.runway
 
     @classmethod
-    def _compute_initial_position(cls) -> Tuple[float, float]:
+    def _compute_initial_position(cls, width: float, height: float) -> Tuple[float, float]:
 
         if cls.op_type == c.departure:
             return cls.runway.get_x_init(), cls.runway.get_y_init()
         else:
-            return cls._get_coordinates_initial_for_arrival()
+            return cls._get_coordinates_initial_for_arrival(width, height)
 
     @classmethod
-    def _get_coordinates_initial_for_arrival(cls) -> Tuple[float, float]:
+    def _get_coordinates_initial_for_arrival(cls, width: float, height: float) -> Tuple[float, float]:
         possible_points = [[x, y] for y in cls.params.map_spawn_y for x in cls.params.map_spawn_x if x != y]
 
-        return random.choice(possible_points)
+        init = random.choice(possible_points)
+
+        return init[0] * width, init[1] * height
 
     @classmethod
     def _get_flight_information(cls) -> Union[dict, None]:
@@ -193,11 +195,18 @@ class Aircraft:
             return 10 * random.randint(0, 2) + 240
 
     @classmethod
-    def _compute_initial_heading(cls) -> float:
+    def _compute_initial_heading(cls, x_init: float, y_init: float) -> float:
         if cls.op_type == c.departure:
             return cls.runway.get_heading()
         else:
-            return 180
+            return cls._get_initial_angle(x_init, y_init)
+
+    @classmethod
+    def _get_initial_angle(cls, x_init: float, y_init: float) -> float:
+
+        angle = cls.runway.get_angle_relative_to_aircraft(x_init, y_init)
+
+        return angle + random.randint(0, cls.params.init_heading_variation)
 
     @classmethod
     def _find_runway(cls) -> MapRunway:
@@ -289,6 +298,13 @@ class Aircraft:
 
             else:
                 self.log_list.add_log({"aircraft": self, "type": c.dep_takeoff_invalid_spd_hdg})
+
+    def process_ils_request(self, runway: str):
+        # Only airborne aircraft can be given an ILS command
+        if self.phase != c.airborne:
+            return
+
+        self.runway.check_ils_interception(self.x, self.y)
 
     def update(self):
         # Execute state update according to flight phase

@@ -1,7 +1,6 @@
 import tkinter as tk
 from typing import Union
 
-from aircraft.aircraft import Aircraft
 from utils.windows_parameters import SingleWindowParameters
 from utils.colours import Colours
 from data_management.game_data_management_service import GameDataManagementService
@@ -106,4 +105,7 @@ class CommandPrompt:
         return True
 
     def _check_takeoff_validity(self, runway) -> bool:
+        return True
+
+    def _check_ils_validity(self, runway) -> bool:
         return True
