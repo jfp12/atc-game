@@ -6,22 +6,23 @@ from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 from aircraft.aircraft import Aircraft
 from base.base import Base
-
+from components.log_list import LogList
 
 class AircraftManager(Base):
     def __init__(
-            self, window, canvas, width, height, params: SingleWindowParameters, data_service: GameDataManagementService, cmd_prompt
+            self, window, canvas, width, height, params: SingleWindowParameters, data_service: GameDataManagementService, log_list: LogList
     ):
         super().__init__(window, width, height, params, data_service, canvas)
 
-        self.aircraft_list = []
-        self.cmd_prompt = cmd_prompt
+        self.log_list = log_list
 
-    def create_aircraft(self):
+        self.aircraft_list = []
+
+    def create_aircraft(self, cmd_prompt):
 
         if self._is_aircraft_generated():
             new_aircraft = Aircraft.create(
-                self.canvas, self.data_service, self.width, self.height, self.params, self.cmd_prompt
+                self.canvas, self.data_service, self.width, self.height, self.params, cmd_prompt, self.log_list
             )
 
             if new_aircraft:

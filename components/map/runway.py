@@ -48,6 +48,9 @@ class MapRunway(MapComponentBase):
         else:
             return self.y0 - 10
 
+    def get_name(self) -> str:
+        return self.name
+
     def get_x_init(self) -> float:
         return self.x_init
 

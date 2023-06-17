@@ -7,11 +7,11 @@ from shapely.geometry import Point
 
 from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
-from base import constants as c
 from utils.colours import Colours as col
 from base import constants as c
 from components.map.runway import MapRunway
 from components.map.waypoint import MapWaypoint
+from components.log_list import LogList
 
 
 class Aircraft:
@@ -21,19 +21,20 @@ class Aircraft:
     waypoint = None
     params = None
 
+    cmd_prompt = None
+    log_list = None
+
     def __init__(
         self,
         kwargs,
         canvas,
         data_service: GameDataManagementService,
         params: SingleWindowParameters,
-        cmd_prompt,
         width: float
     ):
         self.canvas = canvas
         self.data_service = data_service
         self.params = params
-        self.cmd_prompt = cmd_prompt
         self.width = width
 
         # Unpack flight information
@@ -78,6 +79,8 @@ class Aircraft:
 
         self._create_symbol_on_map()
 
+        self.log_list.add_log({"aircraft": self, "type": c.dep_ready})
+
         # self.collision = "black"
         # self.new_orange = False
         # self.new_red = False
@@ -95,14 +98,18 @@ class Aircraft:
     # todo: create AircraftGenerator class and put there all generation things and call it from create class method
     @classmethod
     def create(
-        cls,
-        canvas,
-        data_service: GameDataManagementService,
-        width: float,
-        height: float,
-        params: SingleWindowParameters,
-        cmd_prompt
+            cls,
+            canvas,
+            data_service: GameDataManagementService,
+            width: float,
+            height: float,
+            params: SingleWindowParameters,
+            cmd_prompt,
+            log_list: LogList
     ):
+        cls.cmd_prompt = cmd_prompt
+        cls.log_list = log_list
+
         cls.params = params
         cls.data_service = data_service
         cls.op_type = cls._compute_operation_type()
@@ -132,7 +139,7 @@ class Aircraft:
             "size_pos": 1
         }
 
-        return cls(initial_state, canvas, data_service, params, cmd_prompt, width)
+        return cls(initial_state, canvas, data_service, params, width)
 
     @classmethod
     def _compute_operation_type(cls) -> str:
@@ -279,6 +286,9 @@ class Aircraft:
 
                 if self.icon_id is None:
                     self._create_symbol_on_map()
+
+            else:
+                self.log_list.add_log({"aircraft": self, "type": c.dep_takeoff_invalid_spd_hdg})
 
     def update(self):
         # Execute state update according to flight phase

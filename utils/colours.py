@@ -6,3 +6,6 @@ class Colours:
     DARK_BLUE: str = "#014e8b"
     LIGHT_BLUE: str = "#9ad7ff"
     LIGHT_YELLOW: str = "#f9ff9a"
+    GREEN: str = "#00aa2c"
+    ORANGE: str = "#fea405"
+    RED: str = "#fe4444"

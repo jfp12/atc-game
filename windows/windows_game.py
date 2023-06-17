@@ -37,7 +37,9 @@ class WindowGame(WindowBase):
         self.window.mainloop()
 
     def _update(self):
-        self.sections[SectionRadar.__name__].aircraft_manager.create_aircraft()
+        self.sections[SectionRadar.__name__].aircraft_manager.create_aircraft(
+            self._get_command_prompt_object_from_sidebar(),
+        )
 
         self.sections[SectionRadar.__name__].aircraft_manager.move_aircraft()
 
@@ -45,7 +47,7 @@ class WindowGame(WindowBase):
 
         self.sections[SectionSidebar.__name__].aircraft_list.add_aircraft_to_list()
 
-        print(self.data_service.game_data.game_points)
+        self.sections[SectionRadar.__name__].log_list.delete_expired_logs()
 
     def _create_window_elements(self):
         self._create_sections(
@@ -53,14 +55,14 @@ class WindowGame(WindowBase):
                 {
                     "name": SectionSidebar.__name__, "bg": self.params.sidebar_colour,
                     "width": (self.w_width - self.r_width), "height": self.r_height, "x": self.r_width, "y": 0
-                }
+                },
             ]
         )
         self._create_sections(
             [
                 {
                     "name": SectionRadar.__name__, "bg": self.params.background_colour, "width": self.r_width,
-                    "height": self.r_height, "x": 0, "y": 0, "cmd_prompt": self._get_command_prompt_object()
+                    "height": self.r_height, "x": 0, "y": 0
                 }
             ]
         )
@@ -72,5 +74,8 @@ class WindowGame(WindowBase):
     def _update_game_step(self):
         self.step = datetime.utcnow()
 
-    def _get_command_prompt_object(self):
+    def _get_command_prompt_object_from_sidebar(self):
         return self.sections[SectionSidebar.__name__].command_prompt.prompt
+
+    def _get_log_list_object_from_radar(self):
+        return self.sections[SectionRadar.__name__].log_list

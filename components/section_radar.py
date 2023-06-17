@@ -3,6 +3,7 @@ from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 from aircraft.aircraft_manager import AircraftManager
 from components.map.map import Map
+from components.log_list import LogList
 
 
 class SectionRadar(SectionBase):
@@ -10,11 +11,23 @@ class SectionRadar(SectionBase):
         super().__init__(window, params, kwargs, data_service)
 
         self.aircraft_manager = None
+        self.log_list = None
         self.map = Map.draw(self.canvas, self.width, self.height, self.data_service, self.params)
 
-        self._initialize_aircraft_manager(kwargs["cmd_prompt"])
+        self._initialize_log_list()
+        self._initialize_aircraft_manager()
 
-    def _initialize_aircraft_manager(self, cmd_prompt):
+    def _initialize_log_list(self):
+        self.log_list = LogList(
+            self.window,
+            self.canvas,
+            self.width,
+            self.height,
+            self.params,
+            self.data_service,
+        )
+
+    def _initialize_aircraft_manager(self):
         self.aircraft_manager = AircraftManager(
             self.window,
             self.canvas,
@@ -22,5 +35,6 @@ class SectionRadar(SectionBase):
             self.height,
             self.params,
             self.data_service,
-            cmd_prompt
+            self.log_list
         )
+

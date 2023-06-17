@@ -78,6 +78,20 @@ class SingleWindowParameters:
     obj_dep_min_distance: float = None
     obj_dep_min_altitude: float = None
 
+    day_periods: dict = None
+
+    log_list_font_size: int = None
+    log_list_max: int = None
+    log_list_duration: int = None
+    log_list_vertical_spacing: float = None
+    log_list_x0: float = None
+    log_list_y0: float = None
+    log_list_info_colour: str = None
+    log_list_success_colour: str = None
+    log_list_warn_colour: str = None
+    log_list_foul_colour: str = None
+    log_list_msg_dep_ready: str = None
+    log_list_dep_takeoff_invalid_spd_hdg: str = None
 
 
 class WindowsParameters:
@@ -171,3 +185,24 @@ class WindowsParameters:
         self.game.map_spawn_y = [0.2, 0.5, 0.8]
         self.game.obj_dep_min_distance = 0.05
         self.game.obj_dep_min_altitude = 5000
+
+        self.game.day_periods = {
+            "0": {"h": [0, 5], "t": "night"},
+            "1": {"h": [6, 11], "t": "morning"},
+            "2": {"h": [12, 17], "t": "afternoon"},
+            "3": {"h": [18, 21], "t": "evening"},
+            "4": {"h": [22, 23], "t": "night"},
+        }
+
+        self.game.log_list_font_size = 13
+        self.game.log_list_max = 20
+        self.game.log_list_duration = 5
+        self.game.log_list_vertical_spacing = 0.03
+        self.game.log_list_x0 = 0.01
+        self.game.log_list_y0 = 0
+        self.game.log_list_info_colour = Colours.WHITE
+        self.game.log_list_success_colour = Colours.GREEN
+        self.game.log_list_warn_colour = Colours.ORANGE
+        self.game.log_list_foul_colour = Colours.RED
+        self.game.log_list_msg_dep_ready = "{flight_no}: Good {period}, holding short of runway {rwy}."
+        self.game.log_list_dep_takeoff_invalid_spd_hdg = "{flight_no}: Cannot take-off, we don't have a speed and heading clearance."
