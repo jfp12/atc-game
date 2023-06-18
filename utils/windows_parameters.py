@@ -65,12 +65,14 @@ class SingleWindowParameters:
 
     actions: dict = None
     min_altitude: float = None
+    min_altitude_landing: float = None
     max_altitude: float = None
     min_heading: float = None
     max_heading: float = None
     init_heading_variation: float = None
     min_speed: float = None
     max_speed: float = None
+    min_distance_landing_runway: float = None
     rate_change_altitude: float = None
     rate_change_heading: float = None
     rate_change_speed: float = None
@@ -189,14 +191,17 @@ class WindowsParameters:
             "takeoff": ["t", "to", "takeoff", "take-off"],
             "lineup": ["lu", "line-up", "lineup"],
             "ils": ["ils"],
+            "landing_clearance": ["l", "land"]
         }
         self.game.min_altitude = 100
+        self.game.min_altitude_landing = 150
         self.game.max_altitude = 40000
         self.game.min_heading = 1
         self.game.max_heading = 360
         self.game.init_heading_variation = 30
         self.game.min_speed = 150
         self.game.max_speed = 500
+        self.game.min_distance_landing_runway = 0.05
         self.game.rate_change_altitude = 200
         self.game.rate_change_heading = 3
         self.game.rate_change_speed = 15

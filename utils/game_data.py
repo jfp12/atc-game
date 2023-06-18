@@ -10,7 +10,7 @@ class GameData:
     aircraft_generation_rate: float = 0.4
     total_active_aircraft: int = 10
     screen_speed_conversion_factor: float = 0.02
-    percentage_outbound: float = 1
+    percentage_outbound: float = 0
     airport: str = "LIS"
     airport_id: int = 1
 

@@ -304,6 +304,11 @@ class Aircraft:
         if self.phase == c.airborne:
             self.phase = c.ils_on
 
+    def process_landing_clearance_request(self, runway: str):
+        # Only airborne aircraft can be given landing clearance
+        if self.phase == c.airborne or self.phase == c.ils_on or self.phase == c.ils_intercept:
+            self.phase = c.landing_clearance
+
     def update(self):
         # Execute state update according to flight phase
         getattr(self, f"_phase_update_{self.phase}")()
@@ -358,13 +363,41 @@ class Aircraft:
 
         self._follow_runway_ils_signal()
 
+    def _phase_update_landing_clearance(self):
+        # Do all the other updates since the aircraft is still airborne
+        self._phase_update_airborne()
+
+        self._follow_runway_ils_signal()
+
+        if self._aircraft_landing():
+            self.phase = c.landing
+            print(1)
+
+    def _phase_update_landing(self):
+        self.tgt_altitude = 0
+        self.tgt_speed = 0
+
+        self._update_speed()
+
+        # Update position
+        self._update_aircraft_position()
+        self._update_positions_history()
+
+        self._move_on_map()
+
     def _follow_runway_ils_signal(self):
         self._follow_runway_glideslope()
         self._follow_runway_localizer()
 
+    def _aircraft_landing(self) -> bool:
+        return (
+            self.altitude <= self.params.min_altitude_landing and
+            self.runway.get_distance_to_aircraft(self.x, self.y) <= self.params.min_distance_landing_runway * self.width
+        )
+
     def _follow_runway_glideslope(self):
         # Get ratio of current position and maximum range of ILS
-        altitude_ratio = self.runway.get_distance_to_aircraft(self.x, self.y) / self.runway.get_ils_localizer_range()
+        altitude_ratio = (self.runway.get_distance_to_aircraft(self.x, self.y)) / self.runway.get_ils_localizer_range()
 
         # Get expected altitude altitude
         expected_altitude = altitude_ratio * self.params.ils_gs_max_altitude
@@ -474,6 +507,12 @@ class Aircraft:
                 dist_to_wpt <= self.params.obj_dep_min_distance * self.width and
                 current_alt >= self.params.obj_dep_min_altitude
             ):
+                return True
+            else:
+                return False
+
+        if self.op_type == c.arrival:
+            if self.phase == c.landing and self.speed == 0:
                 return True
             else:
                 return False

@@ -109,3 +109,6 @@ class CommandPrompt:
 
     def _check_ils_validity(self, runway) -> bool:
         return True
+
+    def _check_landing_clearance_validity(self, runway) -> bool:
+        return True
