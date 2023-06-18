@@ -34,6 +34,8 @@ class SingleWindowParameters:
     aircraft_list_departure_text: str = None
     aircraft_list_arrival_colour: str = None
     aircraft_list_arrival_text: str = None
+    aircraft_list_ils_on: str = None
+    aircraft_list_ils_intercept: str = None
     aircraft_list_font_title_size: float = None
     aircraft_list_font_text_size: float = None
     aircraft_list_font_colour: str = None
@@ -149,6 +151,8 @@ class WindowsParameters:
         self.game.aircraft_list_departure_text = "Dep.:"
         self.game.aircraft_list_arrival_colour = Colours.LIGHT_YELLOW
         self.game.aircraft_list_arrival_text = "Arr.:"
+        self.game.aircraft_list_ils_on = "ILS {rwy}"
+        self.game.aircraft_list_ils_intercept = "ILS {rwy} INT"
         self.game.aircraft_symbol_colour = Colours.BLACK
         self.game.aircraft_list_font_title_size = 0.1
         self.game.aircraft_list_font_text_size = 0.05

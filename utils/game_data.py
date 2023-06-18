@@ -6,7 +6,7 @@ class GameData:
     opened_window: WindowCodes = WindowCodes.MAIN_MENU
     game_points = 0
     active_aircraft = {}
-    update_frequency: int = 0.3
+    update_frequency: int = 1.2
     aircraft_generation_rate: float = 0.4
     total_active_aircraft: int = 10
     screen_speed_conversion_factor: float = 0.02

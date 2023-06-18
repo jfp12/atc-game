@@ -109,21 +109,23 @@ class AircraftList(Base):
             label[-1].bind("<Button-1>", eval_label(self, aircraft.flight_no, self.cmd_prompt))
 
     def _get_label_text(self, aircraft: Aircraft) -> str:
-        # txt = aircraft.flight_no.ljust(l) + aircraft.aircraft.ljust(l) + obj + '\n' + \
-        #       str(format(aircraft.alt, "05")).ljust(l) + str(format(aircraft.speed, "03")).ljust(
-        #     l) + aircraft.objective + '\n' + \
-        #       str(format(aircraft.tgt_alt, "05")).ljust(l) + str(format(aircraft.tgt_speed, "03")).ljust(
-        #     l) + ils_state
 
         if aircraft.op_type == c.departure:
             op_type = self.params.aircraft_list_departure_text
         else:
             op_type = self.params.aircraft_list_arrival_text
 
+        if aircraft.phase == c.ils_on:
+            ils = self.params.aircraft_list_ils_on.format(rwy=aircraft.runway.get_name())
+        elif aircraft.phase == c.ils_intercept:
+            ils = self.params.aircraft_list_ils_intercept.format(rwy=aircraft.runway.get_name())
+        else:
+            ils = ""
+
         return (
             f"{aircraft.flight_no.ljust(self.length)} {aircraft.aircraft_type.ljust(self.length)} {op_type} {aircraft.other_airport}\n" +
             f"{self._format_alt(aircraft.altitude)} {self._format_spd(aircraft.speed)} {aircraft.objective_name}\n" +
-            f"{self._format_alt(aircraft.tgt_altitude)} {self._format_spd(aircraft.tgt_speed)} ILS"
+            f"{self._format_alt(aircraft.tgt_altitude)} {self._format_spd(aircraft.tgt_speed)} {ils}"
         )
 
     def _format_alt(self, value: float, ) -> str:

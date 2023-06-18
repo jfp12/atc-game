@@ -235,7 +235,7 @@ class Aircraft:
             self.x - 23,
             self.y - 20,
             fill=self.fill,
-            font="Arial 10",
+            font="Arial 12",
             text=self._get_tag_text()
         )
 
@@ -495,7 +495,6 @@ class Aircraft:
             f"{self.other_airport}\n" +
             f"{str(int(self.altitude))} {str(int(self.tgt_altitude))}\n" +
             f"{str(int(self.speed))} {str(int(self.tgt_speed))}\n"
-            f"{str(int(self.heading))} {str(int(self.tgt_heading))}"
         )
 
     def _get_speed_on_screen(self) -> float:
