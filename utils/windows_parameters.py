@@ -210,8 +210,8 @@ class WindowsParameters:
         self.game.ils_loc_range = 0.2
         self.game.ils_loc_angle_intercept = 90
         self.game.ils_angle_gain = 15
-        self.game.map_spawn_x = [0.1, 0.5, 0.9]
-        self.game.map_spawn_y = [0.1, 0.5, 0.9]
+        self.game.map_spawn_x = [0.01, 0.5, 0.99]
+        self.game.map_spawn_y = [0.01, 0.5, 0.99]
         self.game.obj_dep_min_distance = 0.05
         self.game.obj_dep_min_altitude = 5000
 
