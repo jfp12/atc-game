@@ -49,6 +49,8 @@ class WindowGame(WindowBase):
 
         self.sections[SectionRadar.__name__].log_list.delete_expired_logs()
 
+        self.sections[SectionRadar.__name__].points_counter.update_text()
+
     def _create_window_elements(self):
         self._create_sections(
             [

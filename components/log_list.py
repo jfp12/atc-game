@@ -23,8 +23,8 @@ class LogMessage:
     def expired(self) -> bool:
         return self.time > self.duration
 
-    def move_down(self, offset: int = 1):
-        self.canvas.move(self.id, 0, self.spacing * offset)
+    def move_up(self, offset):
+        self.canvas.move(self.id, 0, - self.spacing * offset)
 
     def delete(self, logs: dict):
         self.canvas.delete(self.id)
@@ -50,9 +50,6 @@ class LogList(Base):
         # Add new log
         self._process_new_log(new_log)
 
-        for log in self.logs.values():
-            log.move_down()
-
     def delete_expired_logs(self):
         logs_to_delete = []
 
@@ -67,6 +64,10 @@ class LogList(Base):
         # Delete expired logs
         for to_delete in logs_to_delete:
             self.logs[to_delete].delete(self.logs)
+
+        # Move the remaining logs up
+        for log_id, log in self.logs.items():
+            log.move_up(offset=len(logs_to_delete))
 
     def _process_new_log(self, new_log: dict):
         # Get log type
@@ -123,7 +124,7 @@ class LogList(Base):
     def _add_log(self, message: str, fill: str, duration: int):
         log_id = self.canvas.create_text(
             self.x0,
-            self.y0,
+            self.y0 + self._get_total_vertical_displacement(),
             fill=fill,
             font=self.font,
             text=message,
@@ -131,3 +132,9 @@ class LogList(Base):
         )
 
         self.logs[log_id] = (LogMessage(self.canvas, log_id, duration, self.vertical_spacing))
+
+    def _get_total_vertical_displacement(self) -> float:
+        return self._get_log_list_size() * self.vertical_spacing
+
+    def _get_log_list_size(self) -> int:
+        return len(self.logs)

@@ -102,6 +102,12 @@ class SingleWindowParameters:
     log_list_dep_takeoff_invalid_spd_hdg: str = None
     log_list_msg_arr_ready: str = None
 
+    point_counter_x0: float = None
+    point_counter_y0: float = None
+    point_counter_colour: str = None
+    point_counter_font_size: float = None
+    point_counter_text: str = None
+
 
 class WindowsParameters:
     def __init__(self):
@@ -217,7 +223,7 @@ class WindowsParameters:
         self.game.log_list_duration = 5
         self.game.log_list_vertical_spacing = 0.03
         self.game.log_list_x0 = 0.01
-        self.game.log_list_y0 = 0
+        self.game.log_list_y0 = 0.02
         self.game.log_list_info_colour = Colours.WHITE
         self.game.log_list_success_colour = Colours.GREEN
         self.game.log_list_warn_colour = Colours.ORANGE
@@ -225,3 +231,9 @@ class WindowsParameters:
         self.game.log_list_msg_dep_ready = "{flight_no}: Good {period}, holding short of runway {rwy}."
         self.game.log_list_dep_takeoff_invalid_spd_hdg = "{flight_no}: Cannot take-off, we don't have a speed and heading clearance."
         self.game.log_list_msg_arr_ready = "{flight_no}: Good {period}, with you at {alt}ft, heading {hdg}."
+
+        self.game.point_counter_x0 = 1
+        self.game.point_counter_y0 = 0.02
+        self.game.point_counter_colour = Colours.BLACK
+        self.game.point_counter_font_size = 15
+        self.game.point_counter_text = "Points: {points}"
