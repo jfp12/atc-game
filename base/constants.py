@@ -7,6 +7,7 @@ lineup = "lineup"
 takeoff = "takeoff"
 landing = "landing"
 airborne = "airborne"
+ils_on = "ils_on"
 ils_intercept = "ils_intercept"
 
 dep_ready = "dep_ready"

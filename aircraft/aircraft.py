@@ -301,28 +301,26 @@ class Aircraft:
 
     def process_ils_request(self, runway: str):
         # Only airborne aircraft can be given an ILS command
-        if self.phase != c.airborne:
-            return
-
-        self.runway.check_ils_interception(self.x, self.y)
+        if self.phase == c.airborne:
+            self.phase = c.ils_on
 
     def update(self):
         # Execute state update according to flight phase
-        getattr(self, f"_update_{self.phase}")()
+        getattr(self, f"_phase_update_{self.phase}")()
 
         if self._check_if_objective_was_reached():
             self.to_be_hand_over = True
 
-    def _update_taxi(self):
+    def _phase_update_taxi(self):
         """
         There are no updates to be made during taxi
         """
         pass
 
-    def _update_lineup(self):
+    def _phase_update_lineup(self):
         self._update_tag_text()
 
-    def _update_takeoff(self):
+    def _phase_update_takeoff(self):
         self._update_speed(takeoff=True)
 
         if self.speed >= self.params.min_speed:
@@ -334,7 +332,7 @@ class Aircraft:
 
         self._move_on_map()
 
-    def _update_airborne(self):
+    def _phase_update_airborne(self):
         # Update state
         self._update_altitude()
         self._update_heading()
@@ -345,6 +343,48 @@ class Aircraft:
         self._update_positions_history()
 
         self._move_on_map()
+
+    def _phase_update_ils_on(self):
+        # Do all the other updates since the aircraft is still airborne
+        self._phase_update_airborne()
+
+        # Check if ILS has been intersected
+        if self.runway.check_ils_interception(self.x, self.y, self.heading, self.altitude):
+            self.phase = c.ils_intercept
+
+    def _phase_update_ils_intercept(self):
+        # Do all the other updates since the aircraft is still airborne
+        self._phase_update_airborne()
+
+        self._follow_runway_ils_signal()
+
+    def _follow_runway_ils_signal(self):
+        self._follow_runway_glideslope()
+        self._follow_runway_localizer()
+
+    def _follow_runway_glideslope(self):
+        # Get ratio of current position and maximum range of ILS
+        altitude_ratio = self.runway.get_distance_to_aircraft(self.x, self.y) / self.runway.get_ils_localizer_range()
+
+        # Get expected altitude altitude
+        expected_altitude = altitude_ratio * self.params.ils_gs_max_altitude
+
+        # Adjust target altitude
+        self.tgt_altitude = min(self.tgt_altitude, expected_altitude)
+
+    def _follow_runway_localizer(self):
+        # Get ratio of current angle between aircraft and runway and total angular range of the ILS localizer
+        angle_ratio = self.runway.get_angular_distance_to_aircraft(self.x, self.y) / self.params.ils_loc_angular_range
+
+        # Get the necessary angle deviation from the runway's heading
+        angle_deviation = self.params.ils_angle_gain * self.params.rate_change_heading * angle_ratio
+
+        # Get correct target heading by adding the runway heading to the deviation
+        final_tgt_heading = self.runway.get_heading() + angle_deviation
+
+        # Make sure target heading is always between 1 and 360 degrees
+        self.tgt_heading = final_tgt_heading if final_tgt_heading <= 360 else final_tgt_heading - 360
+        self.tgt_heading = final_tgt_heading if final_tgt_heading >= 1 else final_tgt_heading + 360
 
     def _update_altitude(self):
         # Get altitude difference

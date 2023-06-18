@@ -64,7 +64,6 @@ class SingleWindowParameters:
     actions: dict = None
     min_altitude: float = None
     max_altitude: float = None
-    max_altitude_ils: float = None
     min_heading: float = None
     max_heading: float = None
     init_heading_variation: float = None
@@ -73,6 +72,11 @@ class SingleWindowParameters:
     rate_change_altitude: float = None
     rate_change_heading: float = None
     rate_change_speed: float = None
+    ils_gs_max_altitude: float = None
+    ils_loc_angular_range: float = None
+    ils_loc_range: float = None
+    ils_loc_angle_intercept: float = None
+    ils_angle_gain: float = None
 
     map_spawn_x: list = None
     map_spawn_y: list = None
@@ -178,7 +182,6 @@ class WindowsParameters:
         }
         self.game.min_altitude = 100
         self.game.max_altitude = 40000
-        self.game.max_altitude_ils = 3000
         self.game.min_heading = 1
         self.game.max_heading = 360
         self.game.init_heading_variation = 30
@@ -187,6 +190,11 @@ class WindowsParameters:
         self.game.rate_change_altitude = 200
         self.game.rate_change_heading = 3
         self.game.rate_change_speed = 15
+        self.game.ils_gs_max_altitude = 3000
+        self.game.ils_loc_angular_range = 18
+        self.game.ils_loc_range = 0.2
+        self.game.ils_loc_angle_intercept = 90
+        self.game.ils_angle_gain = 15
         self.game.map_spawn_x = [0.1, 0.5, 0.9]
         self.game.map_spawn_y = [0.1, 0.5, 0.9]
         self.game.obj_dep_min_distance = 0.05

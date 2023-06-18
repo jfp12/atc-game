@@ -1,6 +1,7 @@
 import math
 
 import pandas as pd
+from shapely.geometry import Point
 
 from components.map.map_component_base import MapComponentBase
 
@@ -24,17 +25,34 @@ class MapRunway(MapComponentBase):
 
         self.aircraft_lineup = False
 
-    def check_ils_interception(self, x: float, y: float):
-        self._check_localizer_interception(x, y)
+    def check_ils_interception(self, x: float, y: float, hdg, alt: float):
+        return (
+            self._ils_check_localizer_range(x, y) and
+            self._ils_check_localizer_interception(hdg) and
+            self._ils_check_glide_slope_range(alt)
+        )
 
-    def _check_localizer_interception(self, x: float, y: float):
-
-        # Get angle between runway start and aircraft
-        angle = self.get_angle_relative_to_aircraft(x, y)
+    def _ils_check_localizer_range(self, x: float, y: float) -> bool:
 
         # Get angle different between runway heading and angle between aircraft and runway
-        angle_difference = min(abs(angle - self.heading), 360 - abs(angle - self.heading))
+        angle_distance = self.get_abs_angular_distance_to_aircraft(x, y)
 
+        # Get distance
+        distance = self.get_distance_to_aircraft(x, y)
+
+        # todo: make self.params.ils_loc_distance * self.width as part of runway? To use in aircraft as well
+        return (
+                angle_distance <= self.params.ils_loc_angular_range and
+                distance <= self.get_ils_localizer_range()
+        )
+
+    def _ils_check_localizer_interception(self, hdg: float) -> bool:
+        heading_difference = min(abs(hdg - self.heading), 360 - abs(hdg - self.heading))
+
+        return heading_difference <= self.params.ils_loc_angle_intercept
+
+    def _ils_check_glide_slope_range(self, alt: float) -> bool:
+        return alt <= self.params.ils_gs_max_altitude
 
     def get_angle_relative_to_aircraft(self, x: float, y: float) -> float:
         # Get arc-tangent values
@@ -47,6 +65,28 @@ class MapRunway(MapComponentBase):
             angle += 360
 
         return angle
+
+    def get_distance_to_aircraft(self, x: float, y: float) -> float:
+        return Point(x, y).distance(Point(self.get_x_init(), self.get_y_init()))
+
+    def get_angular_distance_to_aircraft(self, x: float, y: float) -> float:
+        # Get angle between runway start and aircraft
+        angle = self.get_angle_relative_to_aircraft(x, y)
+
+        # Get angular distance
+        angular_distance = angle - self.heading
+
+        if angular_distance > 180:
+            angular_distance -= 360
+
+        return angular_distance
+
+    def get_abs_angular_distance_to_aircraft(self, x: float, y: float) -> float:
+        # Get angle between runway start and aircraft
+        angle = self.get_angle_relative_to_aircraft(x, y)
+
+        # Get angular distance
+        return min(abs(angle - self.heading), 360 - abs(angle - self.heading))
 
     def _create_ils_localizer_area(self):
         pass
@@ -88,6 +128,9 @@ class MapRunway(MapComponentBase):
 
     def get_heading(self) -> float:
         return self.heading
+
+    def get_ils_localizer_range(self) -> float:
+        return self.params.ils_loc_range * self.width
 
     def get_lineup(self):
         return self.aircraft_lineup
