@@ -2,17 +2,15 @@ import tkinter as tk
 
 from data_management.game_data_management_service import GameDataManagementService
 import components
-from utils.windows_parameters import SingleWindowParameters
 from base.base import Base
 
 
 class WindowBase(Base):
-    def __init__(self, data_service: GameDataManagementService, params: SingleWindowParameters):
-        self.params = params
+    def __init__(self, data: GameDataManagementService, window_name: str):
+        super().__init__(self.window, data, window_name)
+
         self.s_width = None
         self.s_height = None
-        self.w_width = None
-        self.w_height = None
         self.x_pos = None
         self.y_pos = None
         self.background = None
@@ -23,7 +21,6 @@ class WindowBase(Base):
         self.sections = {}
 
         self._open_and_setup_window()
-        super().__init__(self.window, self.w_width, self.w_height, self.params, data_service)
 
     def _open_and_setup_window(self):
         self._open_window()
@@ -31,23 +28,23 @@ class WindowBase(Base):
 
     def _open_window(self):
         self.window = tk.Tk()
-        self._set_screen_dimensions()
 
     def _setup_window(self):
+        self._set_screen_dimensions()
 
         # Choose the correct dimensions type: either full screen or defined dimensions
-        if isinstance(self.params.width, str):
+        if isinstance(self.p().width, str):
             self.window.attributes('-fullscreen', True)
         else:
-            self.w_width = int(self.s_width * self.params.width)
-            self.w_height = int(self.s_height * self.params.height)
-            self.x_pos = int((1 - self.params.width) / 2 * self.s_width)
-            self.y_pos = int((1 - self.params.height) / 2 * self.s_height)
-            self.window.geometry(f"{self.w_width}x{self.w_height}+{self.x_pos}+{self.y_pos}")
+            self._set_width(int(self.s_width * self.p().width))
+            self._set_height(int(self.s_height * self.p().height))
+            self.x_pos = int((1 - self.p().width) / 2 * self.s_width)
+            self.y_pos = int((1 - self.p().height) / 2 * self.s_height)
+            self.window.geometry(f"{self.width}x{self.height}+{self.x_pos}+{self.y_pos}")
 
-        self.background = self.params.background_colour
+        self.background = self.p().background_colour
         self.window.configure(bg=self.background)
-        self.title = self.params.title
+        self.title = self.p().title
         self.window.title(self.title)
 
     def _open_canvas(self):
@@ -61,4 +58,4 @@ class WindowBase(Base):
     def _create_sections(self, sections: list):
         for section in sections:
             section_class = getattr(components, section["name"])
-            self.sections[section["name"]] = section_class(self.window, self.params, section, self.data_service)
+            self.sections[section["name"]] = section_class(self.window, self.p(), section, self.data)

@@ -3,7 +3,6 @@ from typing import Tuple
 from datetime import datetime
 
 from base.base import Base
-from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 
 
@@ -34,9 +33,9 @@ class LogMessage:
 
 class LogList(Base):
     def __init__(
-            self, window, canvas, width, height, params: SingleWindowParameters, data_service: GameDataManagementService
+            self, window, canvas, width, height, data: GameDataManagementService
     ):
-        super().__init__(window, width, height, params, data_service, canvas)
+        super().__init__(window, width, height, params, data, canvas)
 
         self.x0 = self.width * self.params.log_list_x0
         self.y0 = self.height * self.params.log_list_y0

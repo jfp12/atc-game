@@ -3,9 +3,15 @@ from typing import Union
 
 import pandas as pd
 
-from utils.game_data import GameData
 from data_management.data_management_base import DataManagementBase
 import base.constants as c
+from utils.window_parameters import (
+    MainMenuWindowParameters,
+    GameWindowParameters,
+    InGameSaveWindowParameters
+)
+from utils.window_codes import WindowCodes
+from utils.game_data import GameData
 
 
 class GameDataManagementService(DataManagementBase):
@@ -22,8 +28,19 @@ class GameDataManagementService(DataManagementBase):
         self.runways = {}
         self.waypoints = {}
 
+        # Initialize window codes
+        self.window_codes = WindowCodes()
+
         # Game data variables
-        self.game_data = GameData()
+        self.game_data = GameData(self.window_codes.MAIN_MENU)
+
+        # Windows parameters
+        self.parameters = {
+            self.window_codes.MAIN_MENU: MainMenuWindowParameters(),
+            self.window_codes.GAME: GameWindowParameters(),
+            self.window_codes.IN_GAME_SAVE: InGameSaveWindowParameters()
+        }
+
 
     def load_base_data(self):
 

@@ -5,7 +5,6 @@ from typing import Tuple, Union
 import numpy as np
 from shapely.geometry import Point
 
-from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 from utils.colours import Colours as col
 from base import constants as c
@@ -29,7 +28,6 @@ class Aircraft:
         kwargs,
         canvas,
         data_service: GameDataManagementService,
-        params: SingleWindowParameters,
         width: float
     ):
         self.canvas = canvas
@@ -103,7 +101,6 @@ class Aircraft:
             data_service: GameDataManagementService,
             width: float,
             height: float,
-            params: SingleWindowParameters,
             cmd_prompt,
             log_list: LogList
     ):

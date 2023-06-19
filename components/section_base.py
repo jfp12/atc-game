@@ -1,13 +1,11 @@
 import tkinter as tk
 
 from data_management.game_data_management_service import GameDataManagementService
-from utils.windows_parameters import SingleWindowParameters
 from base.base import Base
 
 
 class SectionBase(Base):
-    def __init__(self, window, params: SingleWindowParameters, kwargs, data_service: GameDataManagementService):
-        self.params = params
+    def __init__(self, window, kwargs, data: GameDataManagementService):
         self.window = window
         self.name = kwargs["name"]
         self.bg = kwargs["bg"]
@@ -20,7 +18,7 @@ class SectionBase(Base):
         self.canvas = None
 
         self._create()
-        super().__init__(self.window, self.width, self.height, self.params, data_service, self.canvas)
+        super().__init__(self.window, self.width, self.height, self.params, data, self.canvas)
 
     def _create(self):
         self.section = tk.Frame(self.window, bg=self.bg, width=self.width, height=self.height)

@@ -1,14 +1,13 @@
 import tkinter as tk
 from typing import Union
 
-from utils.windows_parameters import SingleWindowParameters
 from utils.colours import Colours
 from data_management.game_data_management_service import GameDataManagementService
 
 
 class CommandPrompt:
 
-    def __init__(self, canvas, width: float, height: float, params: SingleWindowParameters, data_service: GameDataManagementService):
+    def __init__(self, canvas, width: float, height: float, data_service: GameDataManagementService):
         self.params = params
         self.data_service = data_service
 

@@ -1,18 +1,16 @@
-from utils.window_codes import WindowCodes
-
-
 class GameData:
-
-    opened_window: WindowCodes = WindowCodes.MAIN_MENU
-    game_points = 0
-    active_aircraft = {}
-    update_frequency: int = 0.3
-    aircraft_generation_rate: float = 0.4
-    total_active_aircraft: int = 10
-    screen_speed_conversion_factor: float = 0.02
-    percentage_outbound: float = 0
-    airport: str = "LIS"
-    airport_id: int = 1
+    def __init__(self, initial_window: str):
+        self.opened_window = initial_window
+        self.paused = False
+        self. game_points = 0
+        self.active_aircraft = {}
+        self.update_frequency: int = 0.3
+        self.aircraft_generation_rate: float = 0.4
+        self.total_active_aircraft: int = 10
+        self.screen_speed_conversion_factor: float = 0.02
+        self.percentage_outbound: float = 0
+        self.airport: str = "LIS"
+        self.airport_id: int = 1
 
     def get_active_flight_numbers(self) -> list:
         return list(self.active_aircraft.keys())

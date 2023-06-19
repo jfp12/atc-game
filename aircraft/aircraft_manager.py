@@ -2,7 +2,6 @@ from typing import List
 import random
 import math
 
-from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 from aircraft.aircraft import Aircraft
 from base.base import Base
@@ -10,9 +9,9 @@ from components.log_list import LogList
 
 class AircraftManager(Base):
     def __init__(
-            self, window, canvas, width, height, params: SingleWindowParameters, data_service: GameDataManagementService, log_list: LogList
+            self, window, canvas, width, height, data: GameDataManagementService, log_list: LogList
     ):
-        super().__init__(window, width, height, params, data_service, canvas)
+        super().__init__(window, width, height, params, data, canvas)
 
         self.log_list = log_list
 
@@ -22,19 +21,19 @@ class AircraftManager(Base):
 
         if self._is_aircraft_generated():
             new_aircraft = Aircraft.create(
-                self.canvas, self.data_service, self.width, self.height, self.params, cmd_prompt, self.log_list
+                self.canvas, self.data, self.width, self.height, self.params, cmd_prompt, self.log_list
             )
 
             if new_aircraft:
-                self.data_service.game_data.active_aircraft[new_aircraft.flight_no] = new_aircraft
+                self.data.game_data.active_aircraft[new_aircraft.flight_no] = new_aircraft
 
     def move_aircraft(self):
-        for aircraft in self.data_service.game_data.active_aircraft.values():
+        for aircraft in self.data.game_data.active_aircraft.values():
             aircraft.update()
 
     def hand_aircraft_over(self):
         to_hand_over = []
-        active_aircraft = self.data_service.game_data.active_aircraft
+        active_aircraft = self.data.game_data.active_aircraft
 
         # Identify which aircraft should be removed
         for aircraft in active_aircraft.values():
@@ -50,16 +49,16 @@ class AircraftManager(Base):
 
         if (
             self._get_creation_probability() < creation or
-            self._get_number_active_aircraft() >= self.data_service.game_data.total_active_aircraft
+            self._get_number_active_aircraft() >= self.data.game_data.total_active_aircraft
         ):
             return False
         else:
             return True
 
     def _get_creation_probability(self):
-        constant = self.data_service.game_data.aircraft_generation_rate
+        constant = self.data.game_data.aircraft_generation_rate
         number = self._get_number_active_aircraft()
         return math.exp(- constant * number)
 
     def _get_number_active_aircraft(self):
-        return len(self.data_service.game_data.active_aircraft)
+        return len(self.data.game_data.active_aircraft)

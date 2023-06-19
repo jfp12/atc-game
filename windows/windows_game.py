@@ -2,19 +2,20 @@ from datetime import datetime, timedelta
 
 from data_management.game_data_management_service import GameDataManagementService
 from windows.window_base import WindowBase
-from utils.windows_parameters import SingleWindowParameters
 from components.section_radar import SectionRadar
 from components.section_sidebar import SectionSidebar
 from utils.window_codes import WindowCodes
 
 
 class WindowGame(WindowBase):
-    def __init__(self, data_service: GameDataManagementService, win_parameters: SingleWindowParameters):
-        super().__init__(data_service, win_parameters)
+    def __init__(self, data: GameDataManagementService):
+        super().__init__(data)
 
         self.r_width = None
         self.r_height = None
+
         self.step = datetime.utcnow()
+
         self.aircraft_manager = None
 
         self._open_canvas()
@@ -24,13 +25,14 @@ class WindowGame(WindowBase):
         self.window.mainloop()
 
     def _run_game(self):
-        update_freq = timedelta(seconds=self.data_service.game_data.update_frequency)
+        update_freq = timedelta(seconds=self.data.game_data.update_frequency)
 
-        while self.data_service.game_data.opened_window == WindowCodes.GAME:
+        while self.data.game_data.opened_window == WindowCodes.GAME:
+            if not self.data.game_data.paused:
 
-            if (datetime.utcnow() - self.step) > update_freq:
-                self._update()
-                self._update_game_step()
+                if (datetime.utcnow() - self.step) > update_freq:
+                    self._update()
+                    self._update_game_step()
 
             self.window.update()
 

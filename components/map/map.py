@@ -1,5 +1,4 @@
 from data_management.game_data_management_service import GameDataManagementService
-from utils.windows_parameters import SingleWindowParameters
 
 
 class Map:
@@ -13,7 +12,7 @@ class Map:
         pass
 
     @classmethod
-    def draw(cls, canvas, width: float, height: float, data_service: GameDataManagementService, params: SingleWindowParameters):
+    def draw(cls, canvas, width: float, height: float, data_service: GameDataManagementService):
         cls.canvas = canvas
         cls.width = width
         cls.height = height

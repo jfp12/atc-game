@@ -1,7 +1,6 @@
 import tkinter as tk
 from typing import Tuple
 
-from utils.windows_parameters import SingleWindowParameters
 from data_management.game_data_management_service import GameDataManagementService
 from base import constants as c
 from base.base import Base
@@ -12,13 +11,12 @@ from aircraft.aircraft import Aircraft
 class AircraftList(Base):
     def __init__(
             self,
-            data_service: GameDataManagementService,
+            data: GameDataManagementService,
             width: int,
             height: int,
             window,
             canvas,
             bg: str,
-            params: SingleWindowParameters,
             cmd_prompt
     ):
         super().__init__(
@@ -26,7 +24,7 @@ class AircraftList(Base):
             params.aircraft_list_width * width,
             params.aircraft_list_height * height,
             params,
-            data_service,
+            data,
             canvas
         )
 
@@ -82,7 +80,7 @@ class AircraftList(Base):
 
         eval_label = lambda x, y, z: (lambda p: _add_callsign_to_prompt(x, y, z))
 
-        for aircraft in self.data_service.game_data.active_aircraft.values():
+        for aircraft in self.data.game_data.active_aircraft.values():
             # ils_state = ""
             # if aircraft.ils_status == "on":
             #     ils_state = "ILS " + aircraft.ils_runway
