@@ -33,15 +33,15 @@ class LogMessage:
 
 class LogList(Base):
     def __init__(
-            self, window, canvas, width, height, data: GameDataManagementService
+            self, data: GameDataManagementService, window_name, window, width: float, height: float, canvas
     ):
-        super().__init__(window, width, height, params, data, canvas)
+        super().__init__(data, window_name, window, width, height, canvas)
 
-        self.x0 = self.width * self.params.log_list_x0
-        self.y0 = self.height * self.params.log_list_y0
-        self.font = f"{self.params.main_font} {self.params.log_list_font_size}"
+        self.x0 = self.width * self.p().log_list_x0
+        self.y0 = self.height * self.p().log_list_y0
+        self.font = f"{self.p().main_font} {self.p().log_list_font_size}"
 
-        self.vertical_spacing = self.height * self.params.log_list_vertical_spacing
+        self.vertical_spacing = self.height * self.p().log_list_vertical_spacing
 
         self.logs = {}
 
@@ -84,41 +84,41 @@ class LogList(Base):
     def _prepare_dep_ready_log(self, aircraft) -> Tuple[str, str, int]:
         # Get current period of the day
         now = datetime.utcnow()
-        period = [per["t"] for per in self.params.day_periods.values() if per["h"][0] <= now.hour <= per["h"][1]][0]
+        period = [per["t"] for per in self.p().day_periods.values() if per["h"][0] <= now.hour <= per["h"][1]][0]
 
         # Prepare message
-        message = self.params.log_list_msg_dep_ready.format(
+        message = self.p().log_list_msg_dep_ready.format(
             flight_no=aircraft.flight_no, period=period, rwy=aircraft.runway.get_name()
         )
 
         # Get colour
-        fill = self.params.log_list_info_colour
+        fill = self.p().log_list_info_colour
 
-        return message, fill, self.params.log_list_duration
+        return message, fill, self.p().log_list_duration
 
     def _prepare_arr_ready_log(self, aircraft) -> Tuple[str, str, int]:
         # Get current period of the day
         now = datetime.utcnow()
-        period = [per["t"] for per in self.params.day_periods.values() if per["h"][0] <= now.hour <= per["h"][1]][0]
+        period = [per["t"] for per in self.p().day_periods.values() if per["h"][0] <= now.hour <= per["h"][1]][0]
 
         # Prepare message
-        message = self.params.log_list_msg_arr_ready.format(
+        message = self.p().log_list_msg_arr_ready.format(
             flight_no=aircraft.flight_no, period=period, alt=int(aircraft.altitude), hdg=int(aircraft.heading)
         )
 
         # Get colour
-        fill = self.params.log_list_info_colour
+        fill = self.p().log_list_info_colour
 
-        return message, fill, self.params.log_list_duration
+        return message, fill, self.p().log_list_duration
 
     def _prepare_dep_takeoff_invalid_spd_hdg_log(self, aircraft) -> Tuple[str, str, int]:
         # Prepare message
-        message = self.params.log_list_dep_takeoff_invalid_spd_hdg.format(flight_no=aircraft.flight_no)
+        message = self.p().log_list_dep_takeoff_invalid_spd_hdg.format(flight_no=aircraft.flight_no)
 
         # Get colour
-        fill = self.params.log_list_warn_colour
+        fill = self.p().log_list_warn_colour
 
-        return message, fill, self.params.log_list_duration
+        return message, fill, self.p().log_list_duration
 
     def _add_log(self, message: str, fill: str, duration: int):
         log_id = self.canvas.create_text(

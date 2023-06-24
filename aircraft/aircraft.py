@@ -14,7 +14,7 @@ from components.log_list import LogList
 
 
 class Aircraft:
-    data_service = None
+    data = None
     op_type = None
     runway = None
     waypoint = None
@@ -27,12 +27,11 @@ class Aircraft:
         self,
         kwargs,
         canvas,
-        data_service: GameDataManagementService,
+        data: GameDataManagementService,
         width: float
     ):
         self.canvas = canvas
-        self.data_service = data_service
-        self.params = params
+        self.data = data
         self.width = width
 
         # Unpack flight information
@@ -98,17 +97,18 @@ class Aircraft:
     def create(
             cls,
             canvas,
-            data_service: GameDataManagementService,
+            data: GameDataManagementService,
             width: float,
             height: float,
             cmd_prompt,
-            log_list: LogList
+            log_list: LogList,
+            window_name
     ):
         cls.cmd_prompt = cmd_prompt
         cls.log_list = log_list
 
-        cls.params = params
-        cls.data_service = data_service
+        cls.params = data.parameters[window_name]
+        cls.data = data
         cls.op_type = cls._compute_operation_type()
         cls.runway = cls._find_runway()
         # todo: departures also have a waypoint for now
@@ -136,12 +136,12 @@ class Aircraft:
             "size_pos": 1
         }
 
-        return cls(initial_state, canvas, data_service, params, width)
+        return cls(initial_state, canvas, data, width)
 
     @classmethod
     def _compute_operation_type(cls) -> str:
         operation_type = random.uniform(0.0, 1.0)
-        percentage_outbound = cls.data_service.game_data.percentage_outbound
+        percentage_outbound = cls.data.game_data.percentage_outbound
 
         if operation_type <= percentage_outbound:
             return c.departure
@@ -173,11 +173,11 @@ class Aircraft:
 
     @classmethod
     def _get_flight_information(cls) -> Union[dict, None]:
-        return cls.data_service.fetch_flight_information_for_new_aircraft(cls.op_type)
+        return cls.data.fetch_flight_information_for_new_aircraft(cls.op_type)
 
     @classmethod
     def _compute_initial_altitude(cls) -> float:
-        altitude = cls.data_service.get_game_airport_altitude()
+        altitude = cls.data.get_game_airport_altitude()
 
         if cls.op_type == c.departure:
             return altitude
@@ -207,11 +207,11 @@ class Aircraft:
 
     @classmethod
     def _find_runway(cls) -> MapRunway:
-        return cls.data_service.get_game_active_runway()
+        return cls.data.get_game_active_runway()
 
     @classmethod
     def _find_waypoint(cls):
-        return cls.data_service.get_game_random_waypoint()
+        return cls.data.get_game_random_waypoint()
 
     def _create_symbol_on_map(self):
         if self.phase != c.taxi:
@@ -519,10 +519,10 @@ class Aircraft:
         self._delete_symbol_on_map()
 
         # Add points to game points
-        self.data_service.game_data.add_to_game_points(self.points)
+        self.data.game_data.add_to_game_points(self.points)
 
         # Delete from list
-        self.data_service.game_data.remove_from_active_aircraft(self.flight_no)
+        self.data.game_data.remove_from_active_aircraft(self.flight_no)
 
     def _get_tag_text(self) -> str:
         return (
@@ -534,7 +534,7 @@ class Aircraft:
         )
 
     def _get_speed_on_screen(self) -> float:
-        return self.speed * self.data_service.game_data.screen_speed_conversion_factor
+        return self.speed * self.data.game_data.screen_speed_conversion_factor
 
     def _get_distance(self, x1: float, y1: float, x2: float, y2: float) -> float:
         return Point(x1, y1).distance((Point(x2, y2)))

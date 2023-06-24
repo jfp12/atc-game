@@ -12,7 +12,7 @@ class Map:
         pass
 
     @classmethod
-    def draw(cls, canvas, width: float, height: float, data_service: GameDataManagementService):
+    def draw(cls, canvas, width: float, height: float, data_service: GameDataManagementService, params):
         cls.canvas = canvas
         cls.width = width
         cls.height = height

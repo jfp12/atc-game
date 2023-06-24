@@ -4,7 +4,7 @@ from data_management.game_data_management_service import GameDataManagementServi
 
 class Base:
     def __init__(
-        self, window, data: GameDataManagementService, window_name, width: float = None, height: float = None, canvas=None
+        self, data: GameDataManagementService, window_name, window=None, width: float = None, height: float = None, canvas=None
     ):
         self.window_name = window_name
 
@@ -21,6 +21,12 @@ class Base:
 
     def _set_height(self, height: float):
         self.height = height
+
+    def _set_window(self, window):
+        self.window = window
+
+    def _set_canvas(self, canvas):
+        self.canvas = canvas
 
     def p(self):
         return self.data.parameters[self.window_name]

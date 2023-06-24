@@ -12,24 +12,25 @@ class AircraftList(Base):
     def __init__(
             self,
             data: GameDataManagementService,
+            window_name,
+            window,
             width: int,
             height: int,
-            window,
             canvas,
             bg: str,
             cmd_prompt
     ):
         super().__init__(
-            window,
-            params.aircraft_list_width * width,
-            params.aircraft_list_height * height,
-            params,
             data,
+            window_name,
+            window,
+            width,
+            height,
             canvas
         )
 
-        self.x = self.params.aircraft_list_x0 * width
-        self.y = self.params.aircraft_list_y0 * height
+        self.x = self.p().aircraft_list_x0 * width
+        self.y = self.p().aircraft_list_y0 * height
         self.bg = bg
         self.scrollable_frame = None
         self.length = None
@@ -40,11 +41,21 @@ class AircraftList(Base):
         self._set_label_field_length()
 
     def _create(self):
-        container = tk.Frame(self.window, bg=self.bg, width=self.width, height=self.height)
+        container = tk.Frame(
+            self.window,
+            bg=self.bg,
+            width=self.p().aircraft_list_width * self.width,
+            height=self.p().aircraft_list_height * self.height
+        )
         container.place(x=self.x, y=self.y)
 
         canvas = tk.Canvas(
-            container, bg=self.bg, width=self.width, height=self.height, bd=0, highlightbackground=self.bg
+            container,
+            bg=self.bg,
+            width=self.p().aircraft_list_width * self.width,
+            height=self.p().aircraft_list_height * self.height,
+            bd=0,
+            highlightbackground=self.bg
         )
 
         scrollbar = tk.Scrollbar(container, orient="vertical", command=canvas.yview)
@@ -60,11 +71,11 @@ class AircraftList(Base):
 
     def _add_title(self):
         self.canvas.create_text(
-            self.params.aircraft_list_title_x0 * self.width,
-            self.params.aircraft_list_title_y0 * self.height,
-            font=(self.params.main_font, int(self.params.aircraft_list_font_title_size * self.width)),
+            self.p().aircraft_list_title_x0 * self.width,
+            self.p().aircraft_list_title_y0 * self.height,
+            font=(self.p().main_font, int(self.p().aircraft_list_font_title_size * self.width)),
             fill='black',
-            text=self.params.aircraft_list_title
+            text=self.p().aircraft_list_title
         )
 
     # todo: add methods to add single aircraft and remove single aircraft
@@ -93,10 +104,10 @@ class AircraftList(Base):
                 tk.Label(
                     self.scrollable_frame,
                     justify="left",
-                    font=f"{self.params.main_font} {self._calculate_font_size(self.params.aircraft_list_font_text_size)}",
+                    font=f"{self.p().main_font} {self._calculate_font_size(self.p().aircraft_list_font_text_size)}",
                     text=self._get_label_text(aircraft),
                     bg=self._get_label_colour(aircraft),
-                    foreground=self.params.aircraft_list_font_colour,
+                    foreground=self.p().aircraft_list_font_colour,
                     borderwidth=2,
                     relief="solid",
                     width=int(0.125 * self.width),
@@ -109,14 +120,14 @@ class AircraftList(Base):
     def _get_label_text(self, aircraft: Aircraft) -> str:
 
         if aircraft.op_type == c.departure:
-            op_type = self.params.aircraft_list_departure_text
+            op_type = self.p().aircraft_list_departure_text
         else:
-            op_type = self.params.aircraft_list_arrival_text
+            op_type = self.p().aircraft_list_arrival_text
 
         if aircraft.phase == c.ils_on:
-            ils = self.params.aircraft_list_ils_on.format(rwy=aircraft.runway.get_name())
+            ils = self.p().aircraft_list_ils_on.format(rwy=aircraft.runway.get_name())
         elif aircraft.phase == c.ils_intercept:
-            ils = self.params.aircraft_list_ils_intercept.format(rwy=aircraft.runway.get_name())
+            ils = self.p().aircraft_list_ils_intercept.format(rwy=aircraft.runway.get_name())
         else:
             ils = ""
 
@@ -137,6 +148,6 @@ class AircraftList(Base):
 
     def _get_label_colour(self, aircraft: Aircraft) -> str:
         if aircraft.op_type == c.departure:
-            return self.params.aircraft_list_departure_colour
+            return self.p().aircraft_list_departure_colour
         else:
-            return self.params.aircraft_list_arrival_colour
+            return self.p().aircraft_list_arrival_colour

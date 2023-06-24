@@ -7,13 +7,13 @@ from components.points_counter import PointsCounter
 
 
 class SectionRadar(SectionBase):
-    def __init__(self, window, kwargs, data: GameDataManagementService):
-        super().__init__(window, params, kwargs, data)
+    def __init__(self, window, kwargs, data: GameDataManagementService, window_name: str):
+        super().__init__(window, kwargs, data, window_name)
 
         self.aircraft_manager = None
         self.log_list = None
         self.points_counter = None
-        self.map = Map.draw(self.canvas, self.width, self.height, self.data, self.params)
+        self.map = Map.draw(self.canvas, self.width, self.height, self.data, self.p())
 
         self._initialize_log_list()
         self._initialize_aircraft_manager()
@@ -21,31 +21,31 @@ class SectionRadar(SectionBase):
 
     def _initialize_log_list(self):
         self.log_list = LogList(
+            self.data,
+            self.window_name,
             self.window,
-            self.canvas,
             self.width,
             self.height,
-            self.params,
-            self.data,
+            self.canvas
         )
 
     def _initialize_aircraft_manager(self):
         self.aircraft_manager = AircraftManager(
+            self.data,
+            self.window_name,
             self.window,
-            self.canvas,
             self.width,
             self.height,
-            self.params,
-            self.data,
+            self.canvas,
             self.log_list
         )
 
     def _initialize_point_counter(self):
         self.points_counter = PointsCounter(
+            self.data,
+            self.window_name,
             self.window,
-            self.canvas,
             self.width,
             self.height,
-            self.params,
-            self.data,
+            self.canvas
         )

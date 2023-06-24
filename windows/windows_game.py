@@ -4,30 +4,33 @@ from data_management.game_data_management_service import GameDataManagementServi
 from windows.window_base import WindowBase
 from components.section_radar import SectionRadar
 from components.section_sidebar import SectionSidebar
-from utils.window_codes import WindowCodes
 
 
 class WindowGame(WindowBase):
     def __init__(self, data: GameDataManagementService):
-        super().__init__(data)
+        super().__init__(data, self.__class__.__name__)
 
         self.r_width = None
         self.r_height = None
 
-        self.step = datetime.utcnow()
-
         self.aircraft_manager = None
 
+        self.step = datetime.utcnow()
+
+        # todo: move it to WindowBase, which implies adding sections to all windows
         self._open_canvas()
+
         self._set_radar_dimensions()
         self._create_window_elements()
+
         self._run_game()
+
         self.window.mainloop()
 
     def _run_game(self):
         update_freq = timedelta(seconds=self.data.game_data.update_frequency)
 
-        while self.data.game_data.opened_window == WindowCodes.GAME:
+        while self.data.game_data.opened_window == self.data.window_codes.GAME:
             if not self.data.game_data.paused:
 
                 if (datetime.utcnow() - self.step) > update_freq:
@@ -57,23 +60,23 @@ class WindowGame(WindowBase):
         self._create_sections(
             [
                 {
-                    "name": SectionSidebar.__name__, "bg": self.params.sidebar_colour,
-                    "width": (self.w_width - self.r_width), "height": self.r_height, "x": self.r_width, "y": 0
+                    "name": SectionSidebar.__name__, "bg": self.p().sidebar_colour,
+                    "width": (self.width - self.r_width), "height": self.r_height, "x": self.r_width, "y": 0
                 },
             ]
         )
         self._create_sections(
             [
                 {
-                    "name": SectionRadar.__name__, "bg": self.params.background_colour, "width": self.r_width,
+                    "name": SectionRadar.__name__, "bg": self.p().background_colour, "width": self.r_width,
                     "height": self.r_height, "x": 0, "y": 0
                 }
             ]
         )
 
     def _set_radar_dimensions(self):
-        self.r_width = int(self.w_width * self.params.radar_width)
-        self.r_height = int(self.w_height * self.params.radar_height)
+        self.r_width = int(self.width * self.p().radar_width)
+        self.r_height = int(self.height * self.p().radar_height)
 
     def _update_game_step(self):
         self.step = datetime.utcnow()

@@ -7,7 +7,7 @@ from data_management.game_data_management_service import GameDataManagementServi
 
 class CommandPrompt:
 
-    def __init__(self, canvas, width: float, height: float, data_service: GameDataManagementService):
+    def __init__(self, canvas, width: float, height: float, data_service: GameDataManagementService, params):
         self.params = params
         self.data_service = data_service
 

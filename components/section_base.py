@@ -5,7 +5,7 @@ from base.base import Base
 
 
 class SectionBase(Base):
-    def __init__(self, window, kwargs, data: GameDataManagementService):
+    def __init__(self, window, kwargs, data: GameDataManagementService, window_name: str):
         self.window = window
         self.name = kwargs["name"]
         self.bg = kwargs["bg"]
@@ -18,7 +18,8 @@ class SectionBase(Base):
         self.canvas = None
 
         self._create()
-        super().__init__(self.window, self.width, self.height, self.params, data, self.canvas)
+
+        super().__init__(data, window_name, self.window, self.width, self.height, self.canvas)
 
     def _create(self):
         self.section = tk.Frame(self.window, bg=self.bg, width=self.width, height=self.height)

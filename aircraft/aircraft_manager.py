@@ -7,11 +7,12 @@ from aircraft.aircraft import Aircraft
 from base.base import Base
 from components.log_list import LogList
 
+
 class AircraftManager(Base):
     def __init__(
-            self, window, canvas, width, height, data: GameDataManagementService, log_list: LogList
+            self, data: GameDataManagementService, window_name, window, width, height, canvas, log_list: LogList
     ):
-        super().__init__(window, width, height, params, data, canvas)
+        super().__init__(data, window_name, window, width, height, canvas)
 
         self.log_list = log_list
 
@@ -21,7 +22,7 @@ class AircraftManager(Base):
 
         if self._is_aircraft_generated():
             new_aircraft = Aircraft.create(
-                self.canvas, self.data, self.width, self.height, self.params, cmd_prompt, self.log_list
+                self.canvas, self.data, self.width, self.height, cmd_prompt, self.log_list, self.window_name
             )
 
             if new_aircraft:

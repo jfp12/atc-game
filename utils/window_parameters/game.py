@@ -100,7 +100,7 @@ class GameWindowParametersBase(WindowParametersCommon):
 
 
 class GameWindowParameters(GameWindowParametersBase):
-    def __init(self):
+    def __init__(self):
         self.title = "Game"
         self.width = 1
         self.height = 0.95
@@ -121,8 +121,8 @@ class GameWindowParameters(GameWindowParametersBase):
         self.aircraft_list_x0 = 0.05
         self.aircraft_list_y0 = 0.05
         self.aircraft_list_title = "Active Flights List"
-        self.aircraft_list_title_x0 = 0.55
-        self.aircraft_list_title_y0 = 0.06
+        self.aircraft_list_title_x0 = 0.5
+        self.aircraft_list_title_y0 = 0.03
         self.aircraft_list_departure_colour = Colours.LIGHT_BLUE
         self.aircraft_list_departure_text = "Dep.:"
         self.aircraft_list_arrival_colour = Colours.LIGHT_YELLOW
@@ -130,8 +130,8 @@ class GameWindowParameters(GameWindowParametersBase):
         self.aircraft_list_ils_on = "ILS {rwy}"
         self.aircraft_list_ils_intercept = "ILS {rwy} INT"
         self.aircraft_symbol_colour = Colours.BLACK
-        self.aircraft_list_font_title_size = 0.1
-        self.aircraft_list_font_text_size = 0.05
+        self.aircraft_list_font_title_size = 0.09
+        self.aircraft_list_font_text_size = 0.037
         self.aircraft_list_font_colour = Colours.BLACK
         self.aircraft_symbol_size = 5
         self.aircraft_max_pos_history = 10

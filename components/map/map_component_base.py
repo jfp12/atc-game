@@ -7,7 +7,7 @@ class MapComponentBase:
         self.colour = None
 
     def define_window_parameters(
-        self, canvas, width: float, height: float, colour: str
+        self, canvas, width: float, height: float, params, colour: str
     ):
         self.canvas = canvas
         self.width = width

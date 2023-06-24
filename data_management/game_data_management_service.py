@@ -41,7 +41,6 @@ class GameDataManagementService(DataManagementBase):
             self.window_codes.IN_GAME_SAVE: InGameSaveWindowParameters()
         }
 
-
     def load_base_data(self):
 
         if self.db_url:

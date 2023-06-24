@@ -7,15 +7,13 @@ from base.base import Base
 
 class WindowBase(Base):
     def __init__(self, data: GameDataManagementService, window_name: str):
-        super().__init__(self.window, data, window_name)
+        super().__init__(data, window_name)
 
         self.s_width = None
         self.s_height = None
         self.x_pos = None
         self.y_pos = None
         self.background = None
-        self.window = None
-        self.canvas = None
         self.title = None
 
         self.sections = {}
@@ -27,7 +25,7 @@ class WindowBase(Base):
         self._setup_window()
 
     def _open_window(self):
-        self.window = tk.Tk()
+        self._set_window(tk.Tk())
 
     def _setup_window(self):
         self._set_screen_dimensions()
@@ -48,7 +46,7 @@ class WindowBase(Base):
         self.window.title(self.title)
 
     def _open_canvas(self):
-        self.canvas = tk.Canvas(self.window, bd=0, highlightthickness=0)
+        self._set_canvas(tk.Canvas(self.window, bd=0, highlightthickness=0))
         self.canvas.pack(fill='both', expand=True)
 
     def _set_screen_dimensions(self):
@@ -58,4 +56,4 @@ class WindowBase(Base):
     def _create_sections(self, sections: list):
         for section in sections:
             section_class = getattr(components, section["name"])
-            self.sections[section["name"]] = section_class(self.window, self.p(), section, self.data)
+            self.sections[section["name"]] = section_class(self.window, section, self.data, self.window_name)

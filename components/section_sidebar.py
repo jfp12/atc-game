@@ -5,8 +5,8 @@ from components.command_prompt import CommandPrompt
 
 
 class SectionSidebar(SectionBase):
-    def __init__(self, window, kwargs, data: GameDataManagementService):
-        super().__init__(window, params, kwargs, data)
+    def __init__(self, window, kwargs, data: GameDataManagementService, window_name: str):
+        super().__init__(window, kwargs, data, window_name)
 
         self.aircraft_list = None
         self.command_prompt = None
@@ -18,14 +18,14 @@ class SectionSidebar(SectionBase):
         self._create_buttons(
             [
                 {"master": self.section, "text": "Pause Game", "command": self._exit_game, "x": 0, "y": 0.78,
-                 "width": self.params.sidebar_button_width, "height": self.params.sidebar_button_height},
+                 "width": self.p().sidebar_button_width, "height": self.p().sidebar_button_height},
                 {"master": self.section, "text": "Save Game", "command": self._open_in_game_save_window, "x": 0,
-                 "y": 0.83, "width": self.params.sidebar_button_width, "height": self.params.sidebar_button_height},
+                 "y": 0.83, "width": self.p().sidebar_button_width, "height": self.p().sidebar_button_height},
                 {"master": self.section, "text": "Exit to Main Menu", "command": self._switch_to_main_menu_window,
-                 "x": 0, "y": 0.88, "width": self.params.sidebar_button_width,
-                 "height": self.params.sidebar_button_height},
+                 "x": 0, "y": 0.88, "width": self.p().sidebar_button_width,
+                 "height": self.p().sidebar_button_height},
                 {"master": self.section, "text": "Exit Game", "command": self._exit_game, "x": 0, "y": 0.93,
-                 "width": self.params.sidebar_button_width, "height": self.params.sidebar_button_height}
+                 "width": self.p().sidebar_button_width, "height": self.p().sidebar_button_height}
             ]
         )
 
@@ -35,12 +35,12 @@ class SectionSidebar(SectionBase):
     def _create_aircraft_list(self):
         self.aircraft_list = AircraftList(
             data=self.data,
+            window_name=self.window_name,
+            window=self.section,
             width=self.width,
             height=self.height,
-            window=self.section,
             canvas=self.canvas,
-            bg=self.params.aircraft_list_colour,
-            params=self.params,
+            bg=self.p().aircraft_list_colour,
             cmd_prompt=self.command_prompt.prompt
         )
 
@@ -49,6 +49,6 @@ class SectionSidebar(SectionBase):
             self.canvas,
             self.width,
             self.height,
-            self.params,
-            self.data
+            self.data,
+            self.p()
         )
