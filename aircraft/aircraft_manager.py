@@ -2,7 +2,7 @@ from typing import List
 import random
 import math
 
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 from aircraft.aircraft import Aircraft
 from base.base import Base
 from components.log_list import LogList
@@ -10,7 +10,7 @@ from components.log_list import LogList
 
 class AircraftManager(Base):
     def __init__(
-            self, data: GameDataManagementService, window_name, window, width, height, canvas, log_list: LogList
+            self, data: GameDataService, window_name, window, width, height, canvas, log_list: LogList
     ):
         super().__init__(data, window_name, window, width, height, canvas)
 

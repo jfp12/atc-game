@@ -1,4 +1,4 @@
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 from windows.window_main_menu import WindowMainMenu
 from windows.windows_game import WindowGame
 
@@ -9,7 +9,7 @@ AIRPORT = "LIS"
 
 def game():
 
-    data = GameDataManagementService(db_url=DB_URL)
+    data = GameDataService(db_url=DB_URL)
     data.load_base_data()
 
     while data.game_data.opened_window != data.window_codes.EXIT:

@@ -3,7 +3,7 @@ from typing import Tuple
 from datetime import datetime
 
 from base.base import Base
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 
 
 class LogMessage:
@@ -33,7 +33,7 @@ class LogMessage:
 
 class LogList(Base):
     def __init__(
-            self, data: GameDataManagementService, window_name, window, width: float, height: float, canvas
+            self, data: GameDataService, window_name, window, width: float, height: float, canvas
     ):
         super().__init__(data, window_name, window, width, height, canvas)
 

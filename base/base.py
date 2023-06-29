@@ -1,10 +1,10 @@
 from components.button import ButtonATC
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 
 
 class Base:
     def __init__(
-        self, data: GameDataManagementService, window_name, window=None, width: float = None, height: float = None, canvas=None
+        self, data: GameDataService, window_name, window=None, width: float = None, height: float = None, canvas=None
     ):
         self.window_name = window_name
 
@@ -56,7 +56,10 @@ class Base:
         self._close_window()
 
     def _open_in_game_save_window(self):
+        from windows.window_in_game_save import WindowInGameSave
+
         self.data.game_data.paused = True
+        WindowInGameSave(self.data)
 
     def _exit_game(self):
         self.data.game_data.opened_window = self.data.window_codes.EXIT

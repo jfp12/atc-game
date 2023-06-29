@@ -1,12 +1,12 @@
 import tkinter as tk
 
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 import components
 from base.base import Base
 
 
 class WindowBase(Base):
-    def __init__(self, data: GameDataManagementService, window_name: str):
+    def __init__(self, data: GameDataService, window_name: str):
         super().__init__(data, window_name)
 
         self.s_width = None

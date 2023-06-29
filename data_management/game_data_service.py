@@ -14,7 +14,7 @@ from utils.window_codes import WindowCodes
 from utils.game_data import GameData
 
 
-class GameDataManagementService(DataManagementBase):
+class GameDataService(DataManagementBase):
     def __init__(self, db_url: str = None):
 
         if db_url:

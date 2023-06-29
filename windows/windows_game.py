@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 from windows.window_base import WindowBase
 from components.section_radar import SectionRadar
 from components.section_sidebar import SectionSidebar
 
 
 class WindowGame(WindowBase):
-    def __init__(self, data: GameDataManagementService):
+    def __init__(self, data: GameDataService):
         super().__init__(data, self.__class__.__name__)
 
         self.r_width = None

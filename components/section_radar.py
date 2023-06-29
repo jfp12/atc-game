@@ -1,5 +1,5 @@
 from components.section_base import SectionBase
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 from aircraft.aircraft_manager import AircraftManager
 from components.map.map import Map
 from components.log_list import LogList
@@ -7,7 +7,7 @@ from components.points_counter import PointsCounter
 
 
 class SectionRadar(SectionBase):
-    def __init__(self, window, kwargs, data: GameDataManagementService, window_name: str):
+    def __init__(self, window, kwargs, data: GameDataService, window_name: str):
         super().__init__(window, kwargs, data, window_name)
 
         self.aircraft_manager = None

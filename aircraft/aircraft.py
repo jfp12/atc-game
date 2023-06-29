@@ -5,7 +5,7 @@ from typing import Tuple, Union
 import numpy as np
 from shapely.geometry import Point
 
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 from utils.colours import Colours as col
 from base import constants as c
 from components.map.runway import MapRunway
@@ -27,7 +27,7 @@ class Aircraft:
         self,
         kwargs,
         canvas,
-        data: GameDataManagementService,
+        data: GameDataService,
         width: float
     ):
         self.canvas = canvas
@@ -97,7 +97,7 @@ class Aircraft:
     def create(
             cls,
             canvas,
-            data: GameDataManagementService,
+            data: GameDataService,
             width: float,
             height: float,
             cmd_prompt,

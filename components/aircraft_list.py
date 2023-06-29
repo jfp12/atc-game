@@ -1,7 +1,7 @@
 import tkinter as tk
 from typing import Tuple
 
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 from base import constants as c
 from base.base import Base
 from aircraft.aircraft import Aircraft
@@ -11,7 +11,7 @@ from aircraft.aircraft import Aircraft
 class AircraftList(Base):
     def __init__(
             self,
-            data: GameDataManagementService,
+            data: GameDataService,
             window_name,
             window,
             width: int,
@@ -92,14 +92,6 @@ class AircraftList(Base):
         eval_label = lambda x, y, z: (lambda p: _add_callsign_to_prompt(x, y, z))
 
         for aircraft in self.data.game_data.active_aircraft.values():
-            # ils_state = ""
-            # if aircraft.ils_status == "on":
-            #     ils_state = "ILS " + aircraft.ils_runway
-            # if aircraft.ils_status == "intersect":
-            #     ils_state = "ILS " + aircraft.ils_runway + " INT"
-
-            # l = int(self.width / 170)
-
             label.append(
                 tk.Label(
                     self.scrollable_frame,

@@ -1,10 +1,10 @@
 from windows.window_base import WindowBase
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 
 
 class WindowMainMenu(WindowBase):
 
-    def __init__(self, data: GameDataManagementService):
+    def __init__(self, data: GameDataService):
         super().__init__(data, self.__class__.__name__)
 
         self._create_window_elements()

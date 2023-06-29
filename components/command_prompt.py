@@ -2,12 +2,12 @@ import tkinter as tk
 from typing import Union
 
 from utils.colours import Colours
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 
 
 class CommandPrompt:
 
-    def __init__(self, canvas, width: float, height: float, data_service: GameDataManagementService, params):
+    def __init__(self, canvas, width: float, height: float, data_service: GameDataService, params):
         self.params = params
         self.data_service = data_service
 

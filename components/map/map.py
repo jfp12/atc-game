@@ -1,4 +1,4 @@
-from data_management.game_data_management_service import GameDataManagementService
+from data_management.game_data_service import GameDataService
 
 
 class Map:
@@ -12,7 +12,7 @@ class Map:
         pass
 
     @classmethod
-    def draw(cls, canvas, width: float, height: float, data_service: GameDataManagementService, params):
+    def draw(cls, canvas, width: float, height: float, data_service: GameDataService, params):
         cls.canvas = canvas
         cls.width = width
         cls.height = height

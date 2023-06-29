@@ -1,3 +1,5 @@
 from components.section_base import SectionBase
 from components.section_sidebar import SectionSidebar
 from components.section_radar import SectionRadar
+from components.section_in_game_save import SectionInGameSave
+from components.section_footer import SectionFooter

@@ -11,6 +11,7 @@ class GameData:
         self.percentage_outbound: float = 0
         self.airport: str = "LIS"
         self.airport_id: int = 1
+        self.saves_location: str = "saves/"
 
     def get_active_flight_numbers(self) -> list:
         return list(self.active_aircraft.keys())
